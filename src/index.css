@@ -2,107 +2,129 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* Design system — HSL tokens. Gen Z–friendly: mesh gradients, violet + mint, rounded UI. */
 
 @layer base {
   :root {
-    --background: 42 39% 90%;
-    --foreground: 28 28% 12%;
+    --background: 270 35% 97%;
+    --foreground: 265 28% 11%;
 
-    --card: 42 47% 95%;
-    --card-foreground: 28 28% 12%;
+    --card: 0 0% 100%;
+    --card-foreground: 265 28% 11%;
 
-    --popover: 42 47% 95%;
-    --popover-foreground: 28 28% 12%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 265 28% 11%;
 
-    --primary: 356 49% 32%;
-    --primary-foreground: 42 47% 95%;
+    --primary: 262 83% 58%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 37 30% 82%;
-    --secondary-foreground: 26 35% 18%;
+    --secondary: 270 28% 92%;
+    --secondary-foreground: 265 22% 18%;
 
-    --muted: 39 28% 84%;
-    --muted-foreground: 27 14% 40%;
+    --muted: 270 22% 90%;
+    --muted-foreground: 265 12% 42%;
 
-    --accent: 177 29% 34%;
-    --accent-foreground: 42 47% 95%;
+    --accent: 168 72% 38%;
+    --accent-foreground: 165 100% 98%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 350 89% 60%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 34 24% 70%;
-    --input: 34 24% 78%;
-    --ring: 356 49% 32%;
+    --border: 270 16% 86%;
+    --input: 270 18% 88%;
+    --ring: 262 83% 58%;
 
-    --radius: 0.45rem;
+    --radius: 0.9rem;
 
-    --book-page: 43 54% 96%;
-    --book-page-edge: 37 32% 79%;
-    --book-ink: 27 24% 13%;
-    --book-red: 356 49% 32%;
-    --book-teal: 177 29% 34%;
-    --book-gold: 39 59% 48%;
-    --book-shadow: 28 41% 14%;
-    --gradient-library: radial-gradient(circle at 12% 12%, hsl(39 68% 83% / 0.62), transparent 30%), linear-gradient(140deg, hsl(42 39% 90%), hsl(29 32% 78%));
-    --gradient-page: linear-gradient(90deg, hsl(37 34% 87%) 0%, hsl(var(--book-page)) 8%, hsl(43 60% 98%) 50%, hsl(39 39% 91%) 100%);
-    --shadow-book: 0 32px 70px -28px hsl(var(--book-shadow) / 0.54), 0 10px 22px -16px hsl(var(--book-shadow) / 0.4);
-    --shadow-page-turn: -24px 0 42px -28px hsl(var(--book-shadow) / 0.55) inset;
+    --book-page: 280 30% 99%;
+    --book-page-edge: 270 22% 88%;
+    --book-ink: 265 26% 13%;
+    --book-red: 262 75% 52%;
+    --book-teal: 168 72% 36%;
+    --book-gold: 82 88% 48%;
+    --book-shadow: 265 35% 18%;
+    --gradient-library:
+      radial-gradient(120% 85% at 0% -10%, hsl(280 72% 88% / 0.95), transparent 48%),
+      radial-gradient(90% 70% at 100% 0%, hsl(195 85% 88% / 0.75), transparent 45%),
+      radial-gradient(70% 55% at 80% 100%, hsl(330 90% 92% / 0.55), transparent 52%),
+      linear-gradient(168deg, hsl(270 38% 97%) 0%, hsl(42 52% 96%) 100%);
+    --gradient-page: linear-gradient(
+      95deg,
+      hsl(270 24% 92%) 0%,
+      hsl(var(--book-page)) 10%,
+      hsl(0 0% 100%) 52%,
+      hsl(275 20% 94%) 100%
+    );
+    --shadow-book: 0 28px 64px -24px hsl(262 45% 35% / 0.22), 0 12px 28px -14px hsl(265 30% 20% / 0.12);
+    --shadow-page-turn: -20px 0 36px -24px hsl(var(--book-shadow) / 0.45) inset;
 
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-ring: 262 83% 58%;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    --background: 258 32% 8%;
+    --foreground: 270 25% 96%;
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    --card: 258 28% 11%;
+    --card-foreground: 270 25% 96%;
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 258 28% 11%;
+    --popover-foreground: 270 25% 96%;
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 267 91% 72%;
+    --primary-foreground: 258 32% 10%;
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 258 22% 16%;
+    --secondary-foreground: 270 20% 94%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 258 18% 18%;
+    --muted-foreground: 265 12% 62%;
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 168 55% 48%;
+    --accent-foreground: 258 32% 10%;
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 350 75% 52%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
+    --border: 258 16% 22%;
+    --input: 258 16% 24%;
+    --ring: 267 91% 72%;
+
+    --book-page: 258 24% 13%;
+    --book-page-edge: 258 18% 22%;
+    --book-ink: 270 22% 94%;
+    --book-red: 267 85% 72%;
+    --book-teal: 168 50% 52%;
+    --book-gold: 86 80% 58%;
+    --book-shadow: 0 0% 0%;
+    --gradient-library:
+      radial-gradient(100% 80% at 10% 0%, hsl(270 50% 22% / 0.9), transparent 50%),
+      radial-gradient(80% 60% at 100% 20%, hsl(195 45% 18% / 0.7), transparent 45%),
+      linear-gradient(165deg, hsl(258 32% 8%) 0%, hsl(265 28% 11%) 100%);
+    --gradient-page: linear-gradient(
+      95deg,
+      hsl(258 22% 12%) 0%,
+      hsl(var(--book-page)) 12%,
+      hsl(258 20% 15%) 100%
+    );
+    --shadow-book: 0 24px 56px -20px hsl(0 0% 0% / 0.55), 0 0 0 1px hsl(267 40% 40% / 0.12);
+    --shadow-page-turn: -18px 0 32px -22px hsl(0 0% 0% / 0.5) inset;
+
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-primary: 267 91% 72%;
+    --sidebar-primary-foreground: 258 32% 10%;
     --sidebar-accent: 240 3.7% 15.9%;
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-ring: 267 91% 72%;
   }
 }
 
@@ -112,9 +134,9 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
-    font-family: Georgia, "Times New Roman", serif;
-    font-feature-settings: "kern";
+    @apply bg-background text-foreground antialiased;
+    font-family: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+    font-feature-settings: "kern", "liga" 1;
   }
 }
 
@@ -137,6 +159,87 @@ All colors MUST be HSL.
 
   .writing-crisp {
     text-rendering: optimizeLegibility;
+  }
+
+  .reader-surface-light {
+    --reader-bg: hsl(280 25% 99%);
+    --reader-ink: hsl(265 26% 13%);
+    --reader-muted: hsl(265 12% 40%);
+    --reader-border: hsl(270 16% 86%);
+    --reader-primary: hsl(262 83% 52%);
+  }
+
+  .reader-surface-sepia {
+    --reader-bg: hsl(38 32% 90%);
+    --reader-ink: hsl(25 28% 14%);
+    --reader-muted: hsl(28 14% 34%);
+    --reader-border: hsl(32 20% 58%);
+    --reader-primary: hsl(262 70% 46%);
+  }
+
+  .reader-surface-dark {
+    --reader-bg: hsl(258 26% 11%);
+    --reader-ink: hsl(270 22% 94%);
+    --reader-muted: hsl(265 10% 58%);
+    --reader-border: hsl(258 14% 22%);
+    --reader-primary: hsl(267 88% 74%);
+  }
+
+  .reader-bg {
+    background-color: var(--reader-bg);
+  }
+
+  .reader-ink {
+    color: var(--reader-ink);
+  }
+
+  .reader-muted {
+    color: var(--reader-muted);
+  }
+
+  .reader-border {
+    border-color: var(--reader-border);
+  }
+
+  .reader-primary {
+    color: var(--reader-primary);
+  }
+
+  .focus-ring {
+    @apply outline-none ring-offset-2 ring-offset-background transition-[box-shadow] duration-150;
+  }
+
+  .focus-ring:focus-visible {
+    @apply ring-2 ring-ring;
+  }
+
+  /** Cover placeholder while images load */
+  .thumb-shimmer {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .thumb-shimmer::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(105deg, transparent 0%, hsl(var(--primary) / 0.14) 45%, transparent 90%);
+    animation: thumb-shimmer-slide 1.35s ease-in-out infinite;
+  }
+
+  @keyframes thumb-shimmer-slide {
+    100% {
+      transform: translateX(100%);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .thumb-shimmer::after {
+      animation: none;
+      transform: none;
+      opacity: 0.6;
+    }
   }
 }
 
