@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Bookmark, BookOpenText, ChevronLeft, ChevronRight, Feather, Film, Heart, Library, UserPlus } from "lucide-react";
+import { Bookmark, BookOpenText, ChevronLeft, ChevronRight, Feather, Film } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
@@ -70,7 +70,6 @@ const Index = () => {
   const [storyIndex, setStoryIndex] = useState(0);
   const [pageIndex, setPageIndex] = useState(0);
   const [touchStart, setTouchStart] = useState<{ x: number; y: number } | null>(null);
-  const [followed, setFollowed] = useState<Record<string, boolean>>({});
   const [mode, setMode] = useState<"text" | "video">("text");
 
   const story = stories[storyIndex];
@@ -101,8 +100,8 @@ const Index = () => {
 
   return (
     <main className="min-h-screen overflow-hidden bg-library text-foreground writing-crisp">
-      <section className="mx-auto flex min-h-screen w-full max-w-6xl flex-col px-4 py-5 pb-24 sm:px-6 lg:px-8">
-        <header className="flex items-center justify-between gap-4 border-b border-border/70 pb-3">
+      <section className="mx-auto flex h-screen w-full max-w-5xl flex-col px-3 py-3 pb-24 sm:px-5">
+        <header className="flex items-center justify-between gap-4 pb-3">
           <div className="flex items-center gap-3">
             <span className="flex h-10 w-10 items-center justify-center rounded-sm border border-primary/25 bg-book-page shadow-sm">
               <Feather className="h-5 w-5 text-primary" />
@@ -112,45 +111,24 @@ const Index = () => {
               <h1 className="text-2xl font-bold leading-none text-book-ink sm:text-3xl">Short Stories</h1>
             </div>
           </div>
-          <div className="hidden items-center gap-2 text-sm text-muted-foreground sm:flex">
-            <Library className="h-4 w-4 text-accent" />
-            <span>Text and video tales</span>
-          </div>
+          <p className="text-sm font-semibold text-primary">{storyIndex + 1} / {stories.length}</p>
         </header>
 
-        <section className="grid gap-4 border-b border-border/70 py-4 sm:grid-cols-3">
-          {stories.map((item, index) => (
-            <button
-              key={item.title}
-              onClick={() => {
-                setMode("text");
-                setStoryIndex(index);
-                setPageIndex(0);
-              }}
-              className="rounded-sm border border-border bg-book-page p-4 text-left shadow-sm transition hover:-translate-y-0.5 hover:border-primary/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-            >
-              <p className="text-xs uppercase tracking-[0.2em] text-primary">{item.genre}</p>
-              <h2 className="mt-2 text-xl font-bold leading-tight text-book-ink">{item.title}</h2>
-              <p className="mt-3 text-sm text-muted-foreground">By {item.author} · 10 pages</p>
-            </button>
-          ))}
-        </section>
-
-        <div className="grid flex-1 items-center gap-5 py-5 lg:grid-cols-[1fr_17rem]">
+        <div className="flex min-h-0 flex-1 items-stretch py-1">
           <article
-            className="relative mx-auto w-full max-w-3xl touch-pan-y animate-story-rise"
+            className="relative mx-auto flex h-full w-full max-w-3xl touch-pan-y animate-story-rise flex-col"
             onTouchStart={(event) => setTouchStart({ x: event.touches[0].clientX, y: event.touches[0].clientY })}
             onTouchEnd={(event) => handleTouchEnd(event.changedTouches[0].clientX, event.changedTouches[0].clientY)}
           >
             {mode === "text" ? (
               <>
-                <div className="absolute -left-2 top-5 h-[88%] w-5 rounded-l-sm bg-book-edge shadow-book" />
-                <div className="relative min-h-[68vh] overflow-hidden rounded-sm border border-book-edge bg-book-page shadow-book md:min-h-[72vh]">
+                <div className="absolute -left-2 top-5 h-[86%] w-5 rounded-l-sm bg-book-edge shadow-book" />
+                <div className="relative min-h-0 flex-1 overflow-hidden rounded-sm border border-book-edge bg-book-page shadow-book">
                   <div className="pointer-events-none absolute inset-y-0 left-1/2 w-px bg-border/80" />
                   <div className="pointer-events-none absolute inset-0 shadow-page-turn" />
                   <div className="pointer-events-none absolute inset-0 opacity-[0.08] [background-image:linear-gradient(hsl(var(--book-ink))_1px,transparent_1px)] [background-size:100%_2rem]" />
 
-                  <div key={`${story.title}-${pageIndex}`} className="relative flex min-h-[68vh] animate-page-settle flex-col p-7 md:min-h-[72vh] md:p-12">
+                  <div key={`${story.title}-${pageIndex}`} className="relative flex h-full animate-page-settle flex-col p-6 sm:p-9 md:p-12">
                     <div className="mb-6 flex items-start justify-between gap-4 border-b border-border pb-4">
                       <div>
                         <p className="text-xs uppercase tracking-[0.22em] text-primary">{story.genre}</p>
@@ -188,9 +166,9 @@ const Index = () => {
                 </div>
               </>
             ) : (
-              <div className="relative min-h-[68vh] overflow-hidden rounded-sm border border-book-edge bg-card shadow-book md:min-h-[72vh]">
+              <div className="relative min-h-0 flex-1 overflow-hidden rounded-sm border border-book-edge bg-card shadow-book">
                 <div className="absolute inset-0 bg-library/70" />
-                <div className="relative flex min-h-[68vh] flex-col justify-between p-7 md:min-h-[72vh] md:p-12">
+                <div className="relative flex h-full flex-col justify-between p-7 md:p-12">
                   <div>
                     <p className="text-xs uppercase tracking-[0.22em] text-primary">Video story</p>
                     <h2 className="mt-2 max-w-xl text-4xl font-bold leading-tight text-book-ink sm:text-6xl">{story.title}</h2>
@@ -205,38 +183,6 @@ const Index = () => {
               </div>
             )}
           </article>
-
-          <aside className="rounded-sm border border-border/80 bg-card/70 p-4 shadow-sm backdrop-blur-sm lg:sticky lg:top-6">
-            <div className="border-b border-border pb-4">
-              <p className="text-xs uppercase tracking-[0.22em] text-primary">Author</p>
-              <h3 className="mt-2 text-2xl font-bold text-book-ink">{story.author}</h3>
-              <p className="mt-2 text-sm leading-6 text-muted-foreground">Curated miniature fiction for one quiet sitting.</p>
-              <Button
-                className="mt-4 w-full"
-                variant={followed[story.author] ? "bookmark" : "folio"}
-                onClick={() => setFollowed((current) => ({ ...current, [story.author]: !current[story.author] }))}
-              >
-                {followed[story.author] ? <Heart className="fill-current" /> : <UserPlus />}
-                {followed[story.author] ? "Following" : "Follow author"}
-              </Button>
-            </div>
-
-            <div className="mt-4 space-y-2">
-              {stories.map((item, index) => (
-                <button
-                  key={item.title}
-                  onClick={() => {
-                    setStoryIndex(index);
-                    setPageIndex(0);
-                  }}
-                  className="w-full rounded-sm border border-border bg-book-page px-3 py-3 text-left transition hover:-translate-y-0.5 hover:border-primary/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                >
-                  <p className="text-sm font-bold text-book-ink">{item.title}</p>
-                  <p className="mt-1 text-xs text-muted-foreground">{index === storyIndex ? "Reading now" : "Swipe up queue"}</p>
-                </button>
-              ))}
-            </div>
-          </aside>
         </div>
       </section>
 
