@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { ArrowLeft, Bookmark, ChevronLeft, ChevronRight, Coffee, Moon, Sun, Type } from "lucide-react";
 
+import { ShareStoryWhatsAppButton } from "@/components/app/ShareStoryWhatsAppButton";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { Story } from "@/data/stories";
@@ -163,6 +164,7 @@ export function StoryReader({ stories, storyIndex, pageIndex, onPageIndex, onNav
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <h2 className="reader-ink min-w-0 flex-1 truncate text-center font-serif text-base font-semibold sm:text-lg">{story.title}</h2>
+          <ShareStoryWhatsAppButton story={story} pageIndex={pageIndex} variant="ghost" size="icon" className="shrink-0" />
           <Button type="button" variant="ghost" size="icon" className="focus-ring reader-ink" aria-label={`Text size step ${fontScale + 1} of 4`} onClick={cycleFont}>
             <Type className="h-5 w-5" />
           </Button>

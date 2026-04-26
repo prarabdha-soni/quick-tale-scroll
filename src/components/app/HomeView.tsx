@@ -1,5 +1,7 @@
 import { useMemo, useState, type ReactNode } from "react";
 import { BookOpen, ChevronRight, Clock, Library, List, Sparkles, Wand2, type LucideIcon } from "lucide-react";
+
+import { ShareStoryWhatsAppButton } from "@/components/app/ShareStoryWhatsAppButton";
 import { cn } from "@/lib/utils";
 import type { Story } from "@/data/stories";
 import { filterStoriesByTag, uniqueTags } from "@/data/stories";
@@ -105,7 +107,14 @@ export function HomeView({ stories, onOpenStory, continueReading }: HomeViewProp
                   />
                 </div>
               </div>
-              <div className="flex shrink-0 items-center pr-1">
+              <div className="flex shrink-0 flex-col items-center justify-center gap-1 pr-1 sm:flex-row sm:gap-2">
+                <ShareStoryWhatsAppButton
+                  story={continueStory}
+                  pageIndex={continueReading.pageIndex}
+                  variant="outline"
+                  size="icon"
+                  className="h-10 w-10 rounded-full border-border text-[#128C7E] hover:bg-[#25D366]/10"
+                />
                 <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-md transition-transform group-hover:scale-105">
                   <ChevronRight className="h-5 w-5" strokeWidth={2.5} aria-hidden />
                 </span>
@@ -143,19 +152,25 @@ export function HomeView({ stories, onOpenStory, continueReading }: HomeViewProp
         >
           Featured
         </SectionTitle>
-        <button
-          type="button"
-          onClick={() => onOpenStory(heroIndex >= 0 ? heroIndex : 0, 0)}
-          className="focus-ring group relative flex w-full flex-col overflow-hidden rounded-2xl border border-primary/15 bg-book-page text-left shadow-book ring-1 ring-primary/5 transition-[box-shadow,transform] hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/15 active:scale-[0.99] sm:flex-row sm:items-stretch"
-        >
+        <div className="group relative flex w-full flex-col overflow-hidden rounded-2xl border border-primary/15 bg-book-page shadow-book ring-1 ring-primary/5 transition-[box-shadow,transform] hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/15 sm:flex-row sm:items-stretch">
           <div className="relative aspect-[16/10] w-full shrink-0 overflow-hidden sm:aspect-[3/4] sm:w-[8.5rem] md:w-36">
             <StoryThumb story={hero} className="h-full w-full rounded-none sm:rounded-l-2xl sm:rounded-r-none" />
             <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background/85 via-transparent to-transparent sm:hidden" />
-            <span className="absolute left-3 top-3 rounded-full bg-background/90 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-primary shadow-sm backdrop-blur-sm sm:left-auto sm:right-3 sm:top-3">
+            <span className="absolute left-3 top-3 rounded-full bg-background/90 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-primary shadow-sm backdrop-blur-sm sm:left-auto sm:right-12 sm:top-3">
               Spotlight
             </span>
+            <ShareStoryWhatsAppButton
+              story={hero}
+              variant="secondary"
+              size="icon"
+              className="absolute right-2 top-2 z-20 h-9 w-9 rounded-full border border-border/80 bg-background/95 shadow-md backdrop-blur-sm"
+            />
           </div>
-          <div className="relative flex min-w-0 flex-1 flex-col justify-center gap-1 p-4 sm:p-5">
+          <button
+            type="button"
+            onClick={() => onOpenStory(heroIndex >= 0 ? heroIndex : 0, 0)}
+            className="focus-ring flex min-w-0 flex-1 flex-col justify-center gap-1 p-4 text-left transition active:scale-[0.99] sm:p-5"
+          >
             <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">{hero.genre}</p>
             <h2 className="text-xl font-extrabold leading-[1.15] tracking-tight text-book-ink sm:text-2xl">{hero.title}</h2>
             {hero.tags.length > 0 ? (
@@ -176,8 +191,8 @@ export function HomeView({ stories, onOpenStory, continueReading }: HomeViewProp
               Start reading
               <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" strokeWidth={2.5} />
             </span>
-          </div>
-        </button>
+          </button>
+        </div>
       </section>
 
       <section className="motion-safe:animate-in motion-safe:fade-in motion-safe:duration-500 motion-safe:delay-100">
@@ -225,11 +240,9 @@ export function HomeView({ stories, onOpenStory, continueReading }: HomeViewProp
           {editorsPicks.map((s, idx) => {
             const realIndex = stories.indexOf(s);
             return (
-              <button
+              <div
                 key={realIndex >= 0 ? `pick-${realIndex}` : `pick-f-${idx}`}
-                type="button"
-                onClick={() => onOpenStory(realIndex >= 0 ? realIndex : idx + 1, 0)}
-                className="focus-ring snap-start snap-always min-w-[11.5rem] max-w-[12.5rem] shrink-0 overflow-hidden rounded-2xl border border-primary/10 bg-book-page text-left shadow-md ring-1 ring-transparent transition-[transform,box-shadow] hover:border-primary/25 hover:shadow-lg hover:shadow-primary/10 hover:ring-primary/5 active:scale-[0.99]"
+                className="snap-start snap-always min-w-[11.5rem] max-w-[12.5rem] shrink-0 overflow-hidden rounded-2xl border border-primary/10 bg-book-page text-left shadow-md ring-1 ring-transparent transition-[transform,box-shadow] hover:border-primary/25 hover:shadow-lg hover:shadow-primary/10 hover:ring-primary/5"
               >
                 <div className="relative">
                   <StoryThumb story={s} className="aspect-[4/3] w-full rounded-none rounded-t-2xl" />
@@ -241,14 +254,24 @@ export function HomeView({ stories, onOpenStory, continueReading }: HomeViewProp
                       {s.tags[0]}
                     </span>
                   ) : null}
+                  <ShareStoryWhatsAppButton
+                    story={s}
+                    variant="secondary"
+                    size="icon"
+                    className="absolute bottom-2 right-2 z-10 h-8 w-8 rounded-full border border-border/80 bg-background/95 shadow-md backdrop-blur-sm"
+                  />
                 </div>
-                <div className="space-y-1 p-3.5 pt-2.5">
+                <button
+                  type="button"
+                  onClick={() => onOpenStory(realIndex >= 0 ? realIndex : idx + 1, 0)}
+                  className="focus-ring w-full space-y-1 p-3.5 pt-2.5 text-left transition active:scale-[0.99]"
+                >
                   <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">{s.genre}</p>
                   <p className="line-clamp-2 text-sm font-bold leading-snug text-book-ink">{s.title}</p>
                   <p className="line-clamp-2 text-[11px] leading-snug text-muted-foreground">{s.hook}</p>
                   <p className="pt-0.5 text-[10px] font-bold text-primary">~{s.estimatedMinutes} min</p>
-                </div>
-              </button>
+                </button>
+              </div>
             );
           })}
         </div>
@@ -265,14 +288,14 @@ export function HomeView({ stories, onOpenStory, continueReading }: HomeViewProp
             const isFirst = s === list[0];
             const isLast = s === list[list.length - 1];
             return (
-              <li key={i >= 0 ? `row-${i}` : `row-${s.title}`}>
+              <li key={i >= 0 ? `row-${i}` : `row-${s.title}`} className="flex items-stretch">
                 <button
                   type="button"
                   onClick={() => onOpenStory(i, 0)}
                   className={cn(
-                    "focus-ring group flex w-full items-center gap-3 px-3 py-3.5 text-left transition-colors hover:bg-primary/[0.04] sm:gap-4 sm:px-4 sm:py-4",
-                    isFirst && "rounded-t-2xl",
-                    isLast && "rounded-b-2xl",
+                    "focus-ring group flex min-w-0 flex-1 items-center gap-3 px-3 py-3.5 text-left transition-colors hover:bg-primary/[0.04] sm:gap-4 sm:px-4 sm:py-4",
+                    isFirst && "rounded-tl-2xl",
+                    isLast && "rounded-bl-2xl",
                   )}
                 >
                   <StoryThumb story={s} className="h-[3.5rem] w-12 shrink-0 rounded-xl shadow-sm ring-1 ring-border/40 sm:h-16 sm:w-[3.35rem]" />
@@ -292,6 +315,15 @@ export function HomeView({ stories, onOpenStory, continueReading }: HomeViewProp
                   </div>
                   <ChevronRight className="h-5 w-5 shrink-0 text-primary/60 transition group-hover:translate-x-0.5 group-hover:text-primary" />
                 </button>
+                <div
+                  className={cn(
+                    "flex shrink-0 items-center border-l border-border/60 pr-2 pl-1",
+                    isFirst && "rounded-tr-2xl",
+                    isLast && "rounded-br-2xl",
+                  )}
+                >
+                  <ShareStoryWhatsAppButton story={s} variant="ghost" size="icon" className="h-10 w-10" />
+                </div>
               </li>
             );
           })}

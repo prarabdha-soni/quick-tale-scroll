@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Library } from "lucide-react";
 
+import { ShareStoryWhatsAppButton } from "@/components/app/ShareStoryWhatsAppButton";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { Story } from "@/data/stories";
@@ -48,9 +49,12 @@ export function BooksView({ stories, onOpenStory }: BooksViewProps) {
               <p className="text-xs text-muted-foreground">{s.author}</p>
               <p className="line-clamp-2 text-[11px] leading-snug text-muted-foreground">{s.hook}</p>
               <p className="text-[10px] font-medium text-primary">~{s.estimatedMinutes} min · {s.pages.length} sections</p>
-              <Button variant="folio" size="sm" className="focus-ring mt-1.5 w-fit" onClick={() => onOpenStory(i)}>
-                Open in Story
-              </Button>
+              <div className="mt-1.5 flex flex-wrap items-center gap-2">
+                <Button variant="folio" size="sm" className="focus-ring" onClick={() => onOpenStory(i)}>
+                  Open in Story
+                </Button>
+                <ShareStoryWhatsAppButton story={s} variant="outline" size="sm" />
+              </div>
             </div>
           </li>
         ))}
