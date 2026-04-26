@@ -8,35 +8,47 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 42 39% 90%;
+    --foreground: 28 28% 12%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 42 47% 95%;
+    --card-foreground: 28 28% 12%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 42 47% 95%;
+    --popover-foreground: 28 28% 12%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 356 49% 32%;
+    --primary-foreground: 42 47% 95%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 37 30% 82%;
+    --secondary-foreground: 26 35% 18%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 39 28% 84%;
+    --muted-foreground: 27 14% 40%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 177 29% 34%;
+    --accent-foreground: 42 47% 95%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 34 24% 70%;
+    --input: 34 24% 78%;
+    --ring: 356 49% 32%;
 
-    --radius: 0.5rem;
+    --radius: 0.45rem;
+
+    --book-page: 43 54% 96%;
+    --book-page-edge: 37 32% 79%;
+    --book-ink: 27 24% 13%;
+    --book-red: 356 49% 32%;
+    --book-teal: 177 29% 34%;
+    --book-gold: 39 59% 48%;
+    --book-shadow: 28 41% 14%;
+    --gradient-library: radial-gradient(circle at 12% 12%, hsl(39 68% 83% / 0.62), transparent 30%), linear-gradient(140deg, hsl(42 39% 90%), hsl(29 32% 78%));
+    --gradient-page: linear-gradient(90deg, hsl(37 34% 87%) 0%, hsl(var(--book-page)) 8%, hsl(43 60% 98%) 50%, hsl(39 39% 91%) 100%);
+    --shadow-book: 0 32px 70px -28px hsl(var(--book-shadow) / 0.54), 0 10px 22px -16px hsl(var(--book-shadow) / 0.4);
+    --shadow-page-turn: -24px 0 42px -28px hsl(var(--book-shadow) / 0.55) inset;
 
     --sidebar-background: 0 0% 98%;
 
@@ -101,5 +113,40 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+    font-family: Georgia, "Times New Roman", serif;
+    font-feature-settings: "kern";
+  }
+}
+
+@layer utilities {
+  .bg-library {
+    background: var(--gradient-library);
+  }
+
+  .bg-book-page {
+    background: var(--gradient-page);
+  }
+
+  .shadow-book {
+    box-shadow: var(--shadow-book);
+  }
+
+  .shadow-page-turn {
+    box-shadow: var(--shadow-page-turn);
+  }
+
+  .writing-crisp {
+    text-rendering: optimizeLegibility;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
   }
 }

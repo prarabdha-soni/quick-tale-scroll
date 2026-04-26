@@ -15,6 +15,8 @@ const buttonVariants = cva(
         secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
+        folio: "border border-primary/30 bg-primary text-primary-foreground shadow-sm hover:bg-primary/90 active:translate-y-px",
+        bookmark: "border border-border bg-book-page text-book-ink shadow-sm hover:bg-secondary active:translate-y-px",
       },
       size: {
         default: "h-10 px-4 py-2",
