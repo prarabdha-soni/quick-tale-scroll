@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Bookmark, ChevronLeft, ChevronRight, Feather, Heart, Library, UserPlus } from "lucide-react";
+import { Bookmark, BookOpenText, ChevronLeft, ChevronRight, Feather, Film, Heart, Library, UserPlus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
@@ -71,6 +71,7 @@ const Index = () => {
   const [pageIndex, setPageIndex] = useState(0);
   const [touchStart, setTouchStart] = useState<{ x: number; y: number } | null>(null);
   const [followed, setFollowed] = useState<Record<string, boolean>>({});
+  const [mode, setMode] = useState<"text" | "video">("text");
 
   const story = stories[storyIndex];
   const progress = useMemo(() => ((pageIndex + 1) / story.pages.length) * 100, [pageIndex, story.pages.length]);
@@ -100,71 +101,109 @@ const Index = () => {
 
   return (
     <main className="min-h-screen overflow-hidden bg-library text-foreground writing-crisp">
-      <section className="mx-auto flex min-h-screen w-full max-w-6xl flex-col px-4 py-5 sm:px-6 lg:px-8">
+      <section className="mx-auto flex min-h-screen w-full max-w-6xl flex-col px-4 py-5 pb-24 sm:px-6 lg:px-8">
         <header className="flex items-center justify-between gap-4 border-b border-border/70 pb-3">
           <div className="flex items-center gap-3">
             <span className="flex h-10 w-10 items-center justify-center rounded-sm border border-primary/25 bg-book-page shadow-sm">
               <Feather className="h-5 w-5 text-primary" />
             </span>
             <div>
-              <p className="text-xs uppercase tracking-[0.24em] text-primary">Folio</p>
-              <h1 className="text-2xl font-bold leading-none text-book-ink sm:text-3xl">Short Classics</h1>
+              <p className="text-xs uppercase tracking-[0.24em] text-primary">Folio Home</p>
+              <h1 className="text-2xl font-bold leading-none text-book-ink sm:text-3xl">Short Stories</h1>
             </div>
           </div>
           <div className="hidden items-center gap-2 text-sm text-muted-foreground sm:flex">
             <Library className="h-4 w-4 text-accent" />
-            <span>{stories.length} pocket stories</span>
+            <span>Text and video tales</span>
           </div>
         </header>
 
+        <section className="grid gap-4 border-b border-border/70 py-4 sm:grid-cols-3">
+          {stories.map((item, index) => (
+            <button
+              key={item.title}
+              onClick={() => {
+                setMode("text");
+                setStoryIndex(index);
+                setPageIndex(0);
+              }}
+              className="rounded-sm border border-border bg-book-page p-4 text-left shadow-sm transition hover:-translate-y-0.5 hover:border-primary/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              <p className="text-xs uppercase tracking-[0.2em] text-primary">{item.genre}</p>
+              <h2 className="mt-2 text-xl font-bold leading-tight text-book-ink">{item.title}</h2>
+              <p className="mt-3 text-sm text-muted-foreground">By {item.author} · 10 pages</p>
+            </button>
+          ))}
+        </section>
+
         <div className="grid flex-1 items-center gap-5 py-5 lg:grid-cols-[1fr_17rem]">
           <article
-            className="relative mx-auto w-full max-w-3xl touch-none animate-story-rise"
+            className="relative mx-auto w-full max-w-3xl touch-pan-y animate-story-rise"
             onTouchStart={(event) => setTouchStart({ x: event.touches[0].clientX, y: event.touches[0].clientY })}
             onTouchEnd={(event) => handleTouchEnd(event.changedTouches[0].clientX, event.changedTouches[0].clientY)}
           >
-            <div className="absolute -left-2 top-5 h-[88%] w-5 rounded-l-sm bg-book-edge shadow-book" />
-            <div className="relative min-h-[68vh] overflow-hidden rounded-sm border border-book-edge bg-book-page shadow-book md:min-h-[72vh]">
-              <div className="pointer-events-none absolute inset-y-0 left-1/2 w-px bg-border/80" />
-              <div className="pointer-events-none absolute inset-0 shadow-page-turn" />
-              <div className="pointer-events-none absolute inset-0 opacity-[0.08] [background-image:linear-gradient(hsl(var(--book-ink))_1px,transparent_1px)] [background-size:100%_2rem]" />
+            {mode === "text" ? (
+              <>
+                <div className="absolute -left-2 top-5 h-[88%] w-5 rounded-l-sm bg-book-edge shadow-book" />
+                <div className="relative min-h-[68vh] overflow-hidden rounded-sm border border-book-edge bg-book-page shadow-book md:min-h-[72vh]">
+                  <div className="pointer-events-none absolute inset-y-0 left-1/2 w-px bg-border/80" />
+                  <div className="pointer-events-none absolute inset-0 shadow-page-turn" />
+                  <div className="pointer-events-none absolute inset-0 opacity-[0.08] [background-image:linear-gradient(hsl(var(--book-ink))_1px,transparent_1px)] [background-size:100%_2rem]" />
 
-              <div key={`${story.title}-${pageIndex}`} className="relative flex min-h-[68vh] flex-col p-7 animate-page-settle md:min-h-[72vh] md:p-12">
-                <div className="mb-6 flex items-start justify-between gap-4 border-b border-border pb-4">
-                  <div>
-                    <p className="text-xs uppercase tracking-[0.22em] text-primary">{story.genre}</p>
-                    <h2 className="mt-2 max-w-xl text-3xl font-bold leading-tight text-book-ink sm:text-5xl">{story.title}</h2>
+                  <div key={`${story.title}-${pageIndex}`} className="relative flex min-h-[68vh] animate-page-settle flex-col p-7 md:min-h-[72vh] md:p-12">
+                    <div className="mb-6 flex items-start justify-between gap-4 border-b border-border pb-4">
+                      <div>
+                        <p className="text-xs uppercase tracking-[0.22em] text-primary">{story.genre}</p>
+                        <h2 className="mt-2 max-w-xl text-3xl font-bold leading-tight text-book-ink sm:text-5xl">{story.title}</h2>
+                      </div>
+                      <Bookmark className="mt-1 h-6 w-6 shrink-0 text-book-gold" />
+                    </div>
+
+                    <div className="flex flex-1 items-center">
+                      <p className="max-w-2xl text-[1.62rem] leading-[1.55] text-book-ink sm:text-[2rem] sm:leading-[1.55]">
+                        {story.pages[pageIndex]}
+                      </p>
+                    </div>
+
+                    <footer className="mt-8 flex items-end justify-between gap-5 border-t border-border pt-4 text-sm text-muted-foreground">
+                      <div>
+                        <p className="text-book-ink">By {story.author}</p>
+                        <p>Swipe up for next story · left or right for pages</p>
+                      </div>
+                      <p className="font-semibold text-primary">{pageIndex + 1} / {story.pages.length}</p>
+                    </footer>
                   </div>
-                  <Bookmark className="mt-1 h-6 w-6 shrink-0 text-book-gold" />
                 </div>
 
-                <div className="flex flex-1 items-center">
-                  <p className="max-w-2xl text-[1.62rem] leading-[1.55] text-book-ink sm:text-[2rem] sm:leading-[1.55]">
-                    {story.pages[pageIndex]}
-                  </p>
-                </div>
-
-                <footer className="mt-8 flex items-end justify-between gap-5 border-t border-border pt-4 text-sm text-muted-foreground">
-                  <div>
-                    <p className="text-book-ink">By {story.author}</p>
-                    <p>Swipe left to turn · swipe up for next story</p>
+                <div className="mt-4 flex items-center justify-between gap-3">
+                  <Button variant="bookmark" size="icon" onClick={() => turnPage(-1)} disabled={pageIndex === 0} aria-label="Previous page">
+                    <ChevronLeft />
+                  </Button>
+                  <div className="h-2 flex-1 overflow-hidden rounded-sm bg-secondary">
+                    <div className="h-full rounded-sm bg-primary transition-all duration-300" style={{ width: `${progress}%` }} />
                   </div>
-                  <p className="font-semibold text-primary">{pageIndex + 1} / {story.pages.length}</p>
-                </footer>
+                  <Button variant="bookmark" size="icon" onClick={() => turnPage(1)} disabled={pageIndex === story.pages.length - 1} aria-label="Next page">
+                    <ChevronRight />
+                  </Button>
+                </div>
+              </>
+            ) : (
+              <div className="relative min-h-[68vh] overflow-hidden rounded-sm border border-book-edge bg-card shadow-book md:min-h-[72vh]">
+                <div className="absolute inset-0 bg-library/70" />
+                <div className="relative flex min-h-[68vh] flex-col justify-between p-7 md:min-h-[72vh] md:p-12">
+                  <div>
+                    <p className="text-xs uppercase tracking-[0.22em] text-primary">Video story</p>
+                    <h2 className="mt-2 max-w-xl text-4xl font-bold leading-tight text-book-ink sm:text-6xl">{story.title}</h2>
+                  </div>
+                  <div className="mx-auto flex aspect-[9/16] w-full max-w-xs flex-col items-center justify-center rounded-sm border border-border bg-book-page p-6 text-center shadow-page-turn">
+                    <Film className="h-12 w-12 text-primary" />
+                    <p className="mt-5 text-xl font-bold text-book-ink">Short video edition</p>
+                    <p className="mt-3 text-sm leading-6 text-muted-foreground">A vertical story feed placeholder for narrated clips and visual micro-fiction.</p>
+                  </div>
+                  <p className="text-sm text-muted-foreground">Swipe up to move through video stories.</p>
+                </div>
               </div>
-            </div>
-
-            <div className="mt-4 flex items-center justify-between gap-3">
-              <Button variant="bookmark" size="icon" onClick={() => turnPage(-1)} disabled={pageIndex === 0} aria-label="Previous page">
-                <ChevronLeft />
-              </Button>
-              <div className="h-2 flex-1 overflow-hidden rounded-sm bg-secondary">
-                <div className="h-full rounded-sm bg-primary transition-all duration-300" style={{ width: `${progress}%` }} />
-              </div>
-              <Button variant="bookmark" size="icon" onClick={() => turnPage(1)} disabled={pageIndex === story.pages.length - 1} aria-label="Next page">
-                <ChevronRight />
-              </Button>
-            </div>
+            )}
           </article>
 
           <aside className="rounded-sm border border-border/80 bg-card/70 p-4 shadow-sm backdrop-blur-sm lg:sticky lg:top-6">
@@ -200,6 +239,19 @@ const Index = () => {
           </aside>
         </div>
       </section>
+
+      <nav className="fixed inset-x-0 bottom-0 z-20 border-t border-border bg-card/95 px-4 py-3 shadow-book backdrop-blur-sm">
+        <div className="mx-auto grid max-w-sm grid-cols-2 gap-3">
+          <Button variant={mode === "text" ? "folio" : "bookmark"} onClick={() => setMode("text")}>
+            <BookOpenText />
+            Text
+          </Button>
+          <Button variant={mode === "video" ? "folio" : "bookmark"} onClick={() => setMode("video")}>
+            <Film />
+            Video
+          </Button>
+        </div>
+      </nav>
     </main>
   );
 };
