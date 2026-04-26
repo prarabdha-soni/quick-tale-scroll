@@ -216,7 +216,12 @@ const Index = () => {
                   </div>
                 </div>
 
-                <div className="mt-4 grid grid-cols-[2.75rem_2.75rem_1fr_2.75rem_2.75rem] items-center gap-2 sm:gap-3">
+                <div
+                  className="mt-4 grid grid-cols-[2.75rem_2.75rem_1fr_2.75rem_2.75rem] items-center gap-2 sm:gap-3"
+                  onPointerDown={(event) => event.stopPropagation()}
+                  onPointerMove={(event) => event.stopPropagation()}
+                  onPointerUp={(event) => event.stopPropagation()}
+                >
                   <Button variant="bookmark" size="icon" onClick={() => animateStoryChange(-1)} disabled={storyIndex === 0 || !!swipeExit} aria-label="Previous story">
                     <ChevronDown />
                   </Button>
