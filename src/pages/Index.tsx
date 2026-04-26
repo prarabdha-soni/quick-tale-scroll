@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Bookmark, BookOpenText, ChevronLeft, ChevronRight, Feather, Film } from "lucide-react";
+import { Bookmark, BookOpenText, ChevronDown, ChevronLeft, ChevronRight, ChevronUp, Feather, Film } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
@@ -106,28 +106,37 @@ const Index = () => {
     });
   };
 
+  const resetDrag = () => {
+    setSwipeExit(null);
+    setDragOffset({ x: 0, y: 0 });
+  };
+
+  const animatePageTurn = (direction: 1 | -1) => {
+    setSwipeExit({ x: direction === 1 ? -900 : 900, y: 0 });
+    window.setTimeout(() => {
+      turnPage(direction);
+      resetDrag();
+    }, 180);
+  };
+
+  const animateStoryChange = (direction: 1 | -1) => {
+    setSwipeExit({ x: 0, y: direction === 1 ? -900 : 900 });
+    window.setTimeout(() => {
+      changeStory(direction);
+      resetDrag();
+    }, 180);
+  };
+
   const handleTouchEnd = (x: number, y: number) => {
     if (!touchStart) return;
     const dx = x - touchStart.x;
     const dy = y - touchStart.y;
     const horizontal = Math.abs(dx) > Math.abs(dy);
-    const resetDrag = () => {
-      setSwipeExit(null);
-      setDragOffset({ x: 0, y: 0 });
-    };
 
     if (horizontal && Math.abs(dx) > 70) {
-      setSwipeExit({ x: dx < 0 ? -900 : 900, y: dy });
-      window.setTimeout(() => {
-        turnPage(dx < 0 ? 1 : -1);
-        resetDrag();
-      }, 180);
+      animatePageTurn(dx < 0 ? 1 : -1);
     } else if (!horizontal && Math.abs(dy) > 70) {
-      setSwipeExit({ x: dx, y: dy < 0 ? -900 : 900 });
-      window.setTimeout(() => {
-        changeStory(dy < 0 ? 1 : -1);
-        resetDrag();
-      }, 180);
+      animateStoryChange(dy < 0 ? 1 : -1);
     } else {
       setDragOffset({ x: 0, y: 0 });
     }
@@ -207,15 +216,21 @@ const Index = () => {
                   </div>
                 </div>
 
-                <div className="mt-4 flex items-center justify-between gap-3">
-                  <Button variant="bookmark" size="icon" onClick={() => turnPage(-1)} disabled={pageIndex === 0} aria-label="Previous page">
+                <div className="mt-4 grid grid-cols-[2.75rem_2.75rem_1fr_2.75rem_2.75rem] items-center gap-2 sm:gap-3">
+                  <Button variant="bookmark" size="icon" onClick={() => animateStoryChange(-1)} disabled={storyIndex === 0 || !!swipeExit} aria-label="Previous story">
+                    <ChevronDown />
+                  </Button>
+                  <Button variant="bookmark" size="icon" onClick={() => animatePageTurn(-1)} disabled={pageIndex === 0 || !!swipeExit} aria-label="Previous page">
                     <ChevronLeft />
                   </Button>
                   <div className="h-2 flex-1 overflow-hidden rounded-sm bg-secondary">
                     <div className="h-full rounded-sm bg-primary transition-all duration-300" style={{ width: `${progress}%` }} />
                   </div>
-                  <Button variant="bookmark" size="icon" onClick={() => turnPage(1)} disabled={pageIndex === story.pages.length - 1} aria-label="Next page">
+                  <Button variant="bookmark" size="icon" onClick={() => animatePageTurn(1)} disabled={pageIndex === story.pages.length - 1 || !!swipeExit} aria-label="Next page">
                     <ChevronRight />
+                  </Button>
+                  <Button variant="bookmark" size="icon" onClick={() => animateStoryChange(1)} disabled={storyIndex === stories.length - 1 || !!swipeExit} aria-label="Next story">
+                    <ChevronUp />
                   </Button>
                 </div>
               </>
