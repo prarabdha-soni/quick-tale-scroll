@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Bookmark, BookOpenText, ChevronLeft, ChevronRight, Feather, Film } from "lucide-react";
+import { Bookmark, BookOpenText, ChevronDown, ChevronLeft, ChevronRight, ChevronUp, Feather, Film } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
@@ -106,28 +106,37 @@ const Index = () => {
     });
   };
 
+  const resetDrag = () => {
+    setSwipeExit(null);
+    setDragOffset({ x: 0, y: 0 });
+  };
+
+  const animatePageTurn = (direction: 1 | -1) => {
+    setSwipeExit({ x: direction === 1 ? -900 : 900, y: 0 });
+    window.setTimeout(() => {
+      turnPage(direction);
+      resetDrag();
+    }, 180);
+  };
+
+  const animateStoryChange = (direction: 1 | -1) => {
+    setSwipeExit({ x: 0, y: direction === 1 ? -900 : 900 });
+    window.setTimeout(() => {
+      changeStory(direction);
+      resetDrag();
+    }, 180);
+  };
+
   const handleTouchEnd = (x: number, y: number) => {
     if (!touchStart) return;
     const dx = x - touchStart.x;
     const dy = y - touchStart.y;
     const horizontal = Math.abs(dx) > Math.abs(dy);
-    const resetDrag = () => {
-      setSwipeExit(null);
-      setDragOffset({ x: 0, y: 0 });
-    };
 
     if (horizontal && Math.abs(dx) > 70) {
-      setSwipeExit({ x: dx < 0 ? -900 : 900, y: dy });
-      window.setTimeout(() => {
-        turnPage(dx < 0 ? 1 : -1);
-        resetDrag();
-      }, 180);
+      animatePageTurn(dx < 0 ? 1 : -1);
     } else if (!horizontal && Math.abs(dy) > 70) {
-      setSwipeExit({ x: dx, y: dy < 0 ? -900 : 900 });
-      window.setTimeout(() => {
-        changeStory(dy < 0 ? 1 : -1);
-        resetDrag();
-      }, 180);
+      animateStoryChange(dy < 0 ? 1 : -1);
     } else {
       setDragOffset({ x: 0, y: 0 });
     }
