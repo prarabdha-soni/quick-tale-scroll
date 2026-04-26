@@ -47,6 +47,14 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        book: {
+          page: "hsl(var(--book-page))",
+          edge: "hsl(var(--book-page-edge))",
+          ink: "hsl(var(--book-ink))",
+          red: "hsl(var(--book-red))",
+          teal: "hsl(var(--book-teal))",
+          gold: "hsl(var(--book-gold))",
+        },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",
@@ -64,6 +72,14 @@ export default {
         sm: "calc(var(--radius) - 4px)",
       },
       keyframes: {
+        "page-settle": {
+          "0%": { transform: "rotateY(-7deg) translateX(10px)", opacity: "0.86" },
+          "100%": { transform: "rotateY(0deg) translateX(0)", opacity: "1" },
+        },
+        "story-rise": {
+          "0%": { transform: "translateY(22px)", opacity: "0" },
+          "100%": { transform: "translateY(0)", opacity: "1" },
+        },
         "accordion-down": {
           from: {
             height: "0",
@@ -82,6 +98,8 @@ export default {
         },
       },
       animation: {
+        "page-settle": "page-settle 420ms cubic-bezier(0.2, 0.9, 0.2, 1)",
+        "story-rise": "story-rise 520ms ease-out",
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
       },
