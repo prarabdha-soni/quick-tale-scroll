@@ -116,9 +116,10 @@ const Index = () => {
 
         <div className="flex min-h-0 flex-1 items-stretch py-1">
           <article
-            className="relative mx-auto flex h-full w-full max-w-3xl touch-pan-y animate-story-rise flex-col"
-            onTouchStart={(event) => setTouchStart({ x: event.touches[0].clientX, y: event.touches[0].clientY })}
-            onTouchEnd={(event) => handleTouchEnd(event.changedTouches[0].clientX, event.changedTouches[0].clientY)}
+            className="relative mx-auto flex h-full w-full max-w-3xl touch-none animate-story-rise flex-col select-none"
+            onPointerDown={(event) => setTouchStart({ x: event.clientX, y: event.clientY })}
+            onPointerUp={(event) => handleTouchEnd(event.clientX, event.clientY)}
+            onPointerCancel={() => setTouchStart(null)}
           >
             {mode === "text" ? (
               <>
