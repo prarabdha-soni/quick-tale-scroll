@@ -70,6 +70,8 @@ const Index = () => {
   const [storyIndex, setStoryIndex] = useState(0);
   const [pageIndex, setPageIndex] = useState(0);
   const [touchStart, setTouchStart] = useState<{ x: number; y: number } | null>(null);
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const [swipeExit, setSwipeExit] = useState<{ x: number; y: number } | null>(null);
   const [mode, setMode] = useState<"text" | "video">("text");
 
   const story = stories[storyIndex];
@@ -92,10 +94,33 @@ const Index = () => {
     const dx = x - touchStart.x;
     const dy = y - touchStart.y;
     const horizontal = Math.abs(dx) > Math.abs(dy);
+    const resetDrag = () => {
+      setSwipeExit(null);
+      setDragOffset({ x: 0, y: 0 });
+    };
 
-    if (horizontal && Math.abs(dx) > 42) turnPage(dx < 0 ? 1 : -1);
-    if (!horizontal && Math.abs(dy) > 42) changeStory(dy < 0 ? 1 : -1);
+    if (horizontal && Math.abs(dx) > 70) {
+      setSwipeExit({ x: dx < 0 ? -900 : 900, y: dy });
+      window.setTimeout(() => {
+        turnPage(dx < 0 ? 1 : -1);
+        resetDrag();
+      }, 180);
+    } else if (!horizontal && Math.abs(dy) > 70) {
+      setSwipeExit({ x: dx, y: dy < 0 ? -900 : 900 });
+      window.setTimeout(() => {
+        changeStory(dy < 0 ? 1 : -1);
+        resetDrag();
+      }, 180);
+    } else {
+      setDragOffset({ x: 0, y: 0 });
+    }
     setTouchStart(null);
+  };
+
+  const activeOffset = swipeExit ?? dragOffset;
+  const cardStyle = {
+    transform: `translate3d(${activeOffset.x}px, ${activeOffset.y}px, 0) rotate(${activeOffset.x / 24}deg)`,
+    transition: touchStart ? "none" : "transform 180ms ease-out",
   };
 
   return (
@@ -117,9 +142,20 @@ const Index = () => {
         <div className="flex min-h-0 flex-1 items-stretch py-1">
           <article
             className="relative mx-auto flex h-full w-full max-w-3xl touch-none animate-story-rise flex-col select-none"
-            onPointerDown={(event) => setTouchStart({ x: event.clientX, y: event.clientY })}
+            style={cardStyle}
+            onPointerDown={(event) => {
+              event.currentTarget.setPointerCapture(event.pointerId);
+              setTouchStart({ x: event.clientX, y: event.clientY });
+            }}
+            onPointerMove={(event) => {
+              if (!touchStart || swipeExit) return;
+              setDragOffset({ x: event.clientX - touchStart.x, y: event.clientY - touchStart.y });
+            }}
             onPointerUp={(event) => handleTouchEnd(event.clientX, event.clientY)}
-            onPointerCancel={() => setTouchStart(null)}
+            onPointerCancel={() => {
+              setTouchStart(null);
+              setDragOffset({ x: 0, y: 0 });
+            }}
           >
             {mode === "text" ? (
               <>
