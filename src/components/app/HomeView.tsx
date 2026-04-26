@@ -1,16 +1,5 @@
-import { useMemo, useRef, useState, type ReactNode, type RefObject } from "react";
-import {
-  BookOpen,
-  ChevronRight,
-  Clock,
-  Library,
-  List,
-  Sparkles,
-  Star,
-  Upload,
-  Wand2,
-  type LucideIcon,
-} from "lucide-react";
+import { useMemo, useState, type ReactNode } from "react";
+import { BookOpen, ChevronRight, Clock, Library, List, Sparkles, Wand2, type LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Story } from "@/data/stories";
 import { filterStoriesByTag, uniqueTags } from "@/data/stories";
@@ -20,17 +9,7 @@ type HomeViewProps = {
   stories: Story[];
   onOpenStory: (storyIndex: number, pageIndex?: number) => void;
   continueReading: ContinueReading | null;
-  /** Opens the Upload tab (optional). */
-  onNavigateUpload?: () => void;
 };
-
-function greetingLine(): string {
-  const h = new Date().getHours();
-  if (h < 5) return "Still up? Perfect time for a tale.";
-  if (h < 12) return "Good morning — start with something short.";
-  if (h < 17) return "Good afternoon — steal ten minutes.";
-  return "Good evening — wind down with words.";
-}
 
 function StoryThumb({ story, className }: { story: Story; className?: string }) {
   const [loaded, setLoaded] = useState(false);
@@ -67,11 +46,9 @@ const THOUGHTS = [
   "If the story finds you at midnight, let it stay a while.",
 ] as const;
 
-export function HomeView({ stories, onOpenStory, continueReading, onNavigateUpload }: HomeViewProps) {
+export function HomeView({ stories, onOpenStory, continueReading }: HomeViewProps) {
   const [mood, setMood] = useState<string | null>(null);
   const moods = uniqueTags(stories);
-  const featuredRef = useRef<HTMLElement>(null);
-  const listRef = useRef<HTMLElement>(null);
 
   const filtered = useMemo(() => filterStoriesByTag(stories, mood), [stories, mood]);
   const noMoodMatch = mood !== null && filtered.length === 0;
@@ -85,85 +62,13 @@ export function HomeView({ stories, onOpenStory, continueReading, onNavigateUplo
   const continueProgress =
     continueStory && continueReading ? ((continueReading.pageIndex + 1) / continueStory.pages.length) * 100 : 0;
 
-  const stats = useMemo(() => {
-    const totalMinutes = stories.reduce((acc, s) => acc + s.estimatedMinutes, 0);
-    return {
-      tales: stories.length,
-      minutes: totalMinutes,
-      moods: moods.length,
-    };
-  }, [stories, moods.length]);
-
   const thoughtOfDay = useMemo(() => {
     const i = new Date().getDate() % THOUGHTS.length;
     return THOUGHTS[i];
   }, []);
 
-  const greet = useMemo(() => greetingLine(), []);
-
-  const scrollTo = (ref: RefObject<HTMLElement | null>) => {
-    ref.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-  };
-
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-7 overflow-y-auto px-0.5 pb-4 pt-2 sm:px-0">
-      {/* Welcome + stats + quick actions */}
-      <section className="motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-3 motion-safe:duration-600">
-        <div className="relative overflow-hidden rounded-2xl border border-primary/10 bg-card/90 px-4 py-4 shadow-md shadow-primary/5 backdrop-blur-sm">
-          <div className="pointer-events-none absolute -right-8 -top-10 h-32 w-32 rounded-full bg-primary/15 blur-2xl" />
-          <div className="pointer-events-none absolute -bottom-6 -left-6 h-24 w-24 rounded-full bg-accent/20 blur-2xl" />
-          <p className="relative text-xs font-medium text-muted-foreground">{greet}</p>
-          <p className="relative mt-1.5 text-lg font-extrabold leading-snug tracking-tight text-book-ink">Stories for tonight&apos;s scroll</p>
-          <p className="relative mt-1.5 max-w-[20rem] text-sm leading-relaxed text-muted-foreground">
-            Pick a mood, tap a cover, read in short beats — your place saves automatically.
-          </p>
-
-          <div className="relative mt-4 grid grid-cols-3 gap-2">
-            <div className="rounded-xl border border-border/60 bg-background/50 px-2 py-2.5 text-center backdrop-blur-sm">
-              <p className="text-lg font-extrabold tabular-nums text-primary">{stats.tales}</p>
-              <p className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">Tales</p>
-            </div>
-            <div className="rounded-xl border border-border/60 bg-background/50 px-2 py-2.5 text-center backdrop-blur-sm">
-              <p className="text-lg font-extrabold tabular-nums text-accent">{stats.minutes}+</p>
-              <p className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">Min read</p>
-            </div>
-            <div className="rounded-xl border border-border/60 bg-background/50 px-2 py-2.5 text-center backdrop-blur-sm">
-              <p className="text-lg font-extrabold tabular-nums text-book-ink">{stats.moods}</p>
-              <p className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">Moods</p>
-            </div>
-          </div>
-
-          <div className="relative mt-4 flex flex-wrap gap-2">
-            <button
-              type="button"
-              onClick={() => scrollTo(featuredRef)}
-              className="focus-ring inline-flex flex-1 min-w-[8.5rem] items-center justify-center gap-2 rounded-xl border border-primary/25 bg-primary/10 px-3 py-2.5 text-xs font-bold text-primary transition hover:bg-primary/15 sm:flex-initial sm:min-w-0"
-            >
-              <Star className="h-4 w-4 shrink-0" strokeWidth={2.25} aria-hidden />
-              Jump to featured
-            </button>
-            <button
-              type="button"
-              onClick={() => scrollTo(listRef)}
-              className="focus-ring inline-flex flex-1 min-w-[8.5rem] items-center justify-center gap-2 rounded-xl border border-border bg-secondary/60 px-3 py-2.5 text-xs font-bold text-book-ink transition hover:bg-secondary sm:flex-initial sm:min-w-0"
-            >
-              <List className="h-4 w-4 shrink-0 opacity-80" strokeWidth={2.25} aria-hidden />
-              All titles
-            </button>
-            {onNavigateUpload ? (
-              <button
-                type="button"
-                onClick={onNavigateUpload}
-                className="focus-ring inline-flex w-full items-center justify-center gap-2 rounded-xl border border-accent/30 bg-accent/10 px-3 py-2.5 text-xs font-bold text-accent transition hover:bg-accent/15 sm:w-auto sm:flex-1"
-              >
-                <Upload className="h-4 w-4 shrink-0" strokeWidth={2.25} aria-hidden />
-                Paste your story
-              </button>
-            ) : null}
-          </div>
-        </div>
-      </section>
-
       {noMoodMatch ? (
         <section className="motion-safe:animate-in motion-safe:fade-in motion-safe:duration-500 rounded-2xl border border-primary/20 bg-primary/8 px-4 py-3.5 text-sm text-book-ink">
           <span className="font-semibold">Nothing tagged with &ldquo;{mood}&rdquo;.</span>{" "}
@@ -227,7 +132,7 @@ export function HomeView({ stories, onOpenStory, continueReading, onNavigateUplo
         )}
       </section>
 
-      <section ref={featuredRef} className="motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-2 motion-safe:duration-600 motion-safe:delay-100 scroll-mt-4">
+      <section className="motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-2 motion-safe:duration-600 motion-safe:delay-75">
         <SectionTitle
           icon={Sparkles}
           action={
@@ -352,7 +257,7 @@ export function HomeView({ stories, onOpenStory, continueReading, onNavigateUplo
         ) : null}
       </section>
 
-      <section ref={listRef} className="motion-safe:animate-in motion-safe:fade-in motion-safe:duration-500 motion-safe:delay-200 scroll-mt-4">
+      <section className="motion-safe:animate-in motion-safe:fade-in motion-safe:duration-500 motion-safe:delay-150">
         <SectionTitle icon={List}>All stories</SectionTitle>
         <ul className="divide-y divide-border/80 overflow-hidden rounded-2xl border border-border/80 bg-card shadow-md shadow-primary/5">
           {list.map((s) => {

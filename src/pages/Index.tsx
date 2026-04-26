@@ -120,9 +120,7 @@ const Index = () => {
       ) : null}
 
       <div className="flex min-h-0 flex-1 flex-col px-3 pb-24 sm:px-4">
-        {tab === "home" ? (
-          <HomeView stories={mergedStories} onOpenStory={openStory} continueReading={continueReading} onNavigateUpload={() => setTab("upload")} />
-        ) : null}
+        {tab === "home" ? <HomeView stories={mergedStories} onOpenStory={openStory} continueReading={continueReading} /> : null}
         {tab === "upload" ? (
           <UploadView pastedTale={pastedTale} onSavePastedTale={onSavePastedTale} onClearPastedTale={onClearPastedTale} />
         ) : null}
