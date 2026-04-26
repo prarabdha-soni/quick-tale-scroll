@@ -216,15 +216,21 @@ const Index = () => {
                   </div>
                 </div>
 
-                <div className="mt-4 flex items-center justify-between gap-3">
-                  <Button variant="bookmark" size="icon" onClick={() => turnPage(-1)} disabled={pageIndex === 0} aria-label="Previous page">
+                <div className="mt-4 grid grid-cols-[2.75rem_2.75rem_1fr_2.75rem_2.75rem] items-center gap-2 sm:gap-3">
+                  <Button variant="bookmark" size="icon" onClick={() => animateStoryChange(-1)} disabled={storyIndex === 0 || !!swipeExit} aria-label="Previous story">
+                    <ChevronDown />
+                  </Button>
+                  <Button variant="bookmark" size="icon" onClick={() => animatePageTurn(-1)} disabled={pageIndex === 0 || !!swipeExit} aria-label="Previous page">
                     <ChevronLeft />
                   </Button>
                   <div className="h-2 flex-1 overflow-hidden rounded-sm bg-secondary">
                     <div className="h-full rounded-sm bg-primary transition-all duration-300" style={{ width: `${progress}%` }} />
                   </div>
-                  <Button variant="bookmark" size="icon" onClick={() => turnPage(1)} disabled={pageIndex === story.pages.length - 1} aria-label="Next page">
+                  <Button variant="bookmark" size="icon" onClick={() => animatePageTurn(1)} disabled={pageIndex === story.pages.length - 1 || !!swipeExit} aria-label="Next page">
                     <ChevronRight />
+                  </Button>
+                  <Button variant="bookmark" size="icon" onClick={() => animateStoryChange(1)} disabled={storyIndex === stories.length - 1 || !!swipeExit} aria-label="Next story">
+                    <ChevronUp />
                   </Button>
                 </div>
               </>
