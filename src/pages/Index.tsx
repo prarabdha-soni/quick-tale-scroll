@@ -12,20 +12,20 @@ type Story = {
 
 const stories: Story[] = [
   {
-    title: "The Clockmaker's Rain",
-    author: "Mara Vale",
-    genre: "Quiet wonder",
+    title: "The Wrong Lamp",
+    author: "Anonymous",
+    genre: "Reality fracture",
     pages: [
-      "On Tuesdays, the clockmaker wound the rain. Not the town clock, not the brass watches in his window, but the rain itself, which waited in a blue jar beside his kettle.",
-      "He turned the little silver key three times, and clouds gathered over Bellwether Street with the obedience of well-trained pigeons.",
-      "People loved him for this. The baker planned crust by him. The laundress cursed him kindly. Children left cups outside and called them oceans.",
-      "Only Elian, who delivered letters, noticed the clockmaker never stepped into the weather he made. He watched from behind glass, dry as a secret.",
-      "One morning Elian brought a letter with no stamp, no seal, and handwriting like reeds bending in wind. The clockmaker's hands trembled.",
-      "Inside were seven words: Please let the rain remember me today. He folded the page as if it had weight enough to bruise.",
-      "That afternoon he wound the jar four turns. Rain fell upward first, then sideways, then soft and straight, carrying the scent of violets.",
-      "The town stopped. Even the horses bowed their heads. In every puddle stood the reflection of a woman no one had seen for twenty years.",
-      "The clockmaker opened his door. Rain touched his sleeve. He laughed once, a rusty hinge becoming music.",
-      "After that, Tuesdays came by themselves. The jar stayed empty, but Bellwether Street still smelled of violets whenever someone was missed enough.",
+      "The punch landed before he saw it coming. One moment he was a college student in a shouting crowd; the next, the pavement rushed up like a black wave.",
+      "He did not wake in a hospital. He woke in an apartment he somehow knew was his, late for a job he somehow remembered having.",
+      "Years began to pass with the quiet certainty of real life. He met a woman at a bookstore, laughed with her over coffee, and learned the shape of her smile by heart.",
+      "They married in spring. They bought a small house, argued over paint, burned dinners, paid bills, and filled rooms with ordinary, unremarkable happiness.",
+      "Children came, loud and bright. There were school mornings, fever nights, tiny shoes by the door, and family dinners where everyone talked at once.",
+      "Nothing felt like a dream. Every day had weight: work, exhaustion, birthdays, private jokes, old photographs, and love that settled deep into his bones.",
+      "Then one afternoon, in the living room, he noticed the lamp. It stood beside the couch, but its angles were wrong, as if reality had folded badly around it.",
+      "He stared. The shade stretched, bent, and pulled at his vision. His wife asked what was wrong. His children grew quiet. He could not look away.",
+      "The lamp became a crack in everything. The walls shivered. His family's voices warped into a distant echo, and the life he had built collapsed into light.",
+      "He woke on the ground, friends leaning over him. Only seconds had passed since the fight. But he had lost a wife, children, and years—and never knew which life was real.",
     ],
   },
   {
