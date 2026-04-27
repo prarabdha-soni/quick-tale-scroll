@@ -185,7 +185,7 @@ export function StoryReader({ stories, storyIndex, pageIndex, onPageIndex, onNav
         </div>
       </div>
 
-      <article className="relative mx-auto flex min-h-0 w-full max-w-3xl flex-1 flex-col">
+      <article className="relative mx-auto flex min-h-0 w-full max-w-3xl flex-1 flex-col px-3 sm:px-4">
         <div className="reader-border relative flex min-h-0 flex-1 flex-col overflow-hidden border-x border-b shadow-sm">
           <div className="pointer-events-none absolute inset-0 z-[1] opacity-[0.08] [background-image:linear-gradient(hsl(var(--book-ink))_1px,transparent_1px)] [background-size:100%_2rem]" />
 
@@ -207,7 +207,7 @@ export function StoryReader({ stories, storyIndex, pageIndex, onPageIndex, onNav
                 aria-label={`Part ${idx + 1} of ${totalBlocks}`}
               >
                 <div
-                  className="reader-bg flex h-full max-h-full min-h-0 flex-col overflow-y-auto overscroll-y-contain px-5 pb-28 pt-6 sm:px-8 sm:pb-24 sm:pt-8 md:px-12"
+                  className="reader-bg flex h-full max-h-full min-h-0 flex-col overflow-y-auto overscroll-y-contain px-5 pb-20 pt-6 sm:px-8 sm:pb-24 sm:pt-8 md:px-12"
                   style={{ touchAction: "pan-y pinch-zoom" }}
                 >
                   {idx === 0 ? (
@@ -260,7 +260,7 @@ export function StoryReader({ stories, storyIndex, pageIndex, onPageIndex, onNav
             ))}
           </div>
 
-          <div className="reader-border reader-bg relative z-[2] flex shrink-0 items-center justify-between gap-2 border-t px-2 py-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] sm:px-4">
+          <div className="reader-border reader-bg relative z-[2] mb-3 flex shrink-0 items-center justify-between gap-2 rounded-b-2xl border-t px-2 py-2 pb-3 sm:px-4">
             <Button
               type="button"
               variant="outline"
