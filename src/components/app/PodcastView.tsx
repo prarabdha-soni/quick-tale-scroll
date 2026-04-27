@@ -1,28 +1,41 @@
 import { useEffect, useMemo, useState } from "react";
 import { Headphones, Moon, Pause, Play, Share2, Timer } from "lucide-react";
 
-const SAMPLE_PODCAST = {
-  title: "The Lake That Listened",
-  category: "Sleep story",
-  duration: "4 min",
-  narrator: "Nishu Calm",
-  text:
-    "Close your eyes and imagine a quiet lake under a silver moon. Every ripple carries away one small worry. A lantern floats from the shore, warm and gentle, guiding you toward a soft forest path. The night is safe, the air is cool, and every breath makes the world a little slower.",
-};
+const PODCASTS = [
+  {
+    title: "The Lake That Listened",
+    category: "Sleep story",
+    duration: "4 min",
+    narrator: "Nishu Calm",
+    text:
+      "Close your eyes and imagine a quiet lake under a silver moon. Every ripple carries away one small worry. A lantern floats from the shore, warm and gentle, guiding you toward a soft forest path. The night is safe, the air is cool, and every breath makes the world a little slower.",
+  },
+  {
+    title: "वो आख़िरी वॉइस नोट",
+    category: "Viral short",
+    duration: "2 min",
+    narrator: "Nishu Hindi",
+    text:
+      "रात के ठीक बारह बजे अनाया के फोन पर उसके भाई का वॉइस नोट आया। आवाज़ कांप रही थी—दीदी, दरवाज़ा मत खोलना। अनाया जम गई, क्योंकि उसका भाई तो शाम से घर के अंदर ही सो रहा था। तभी दरवाज़े पर दस्तक हुई, और अंदर कमरे से भाई की नींद में आवाज़ आई—दीदी, मेरा फोन कहाँ है?",
+  },
+] as const;
 
 export function PodcastView() {
   const [playing, setPlaying] = useState(false);
+  const [selectedIndex, setSelectedIndex] = useState(1);
+  const selectedPodcast = PODCASTS[selectedIndex];
   const canSpeak = typeof window !== "undefined" && "speechSynthesis" in window;
 
   const utterance = useMemo(() => {
     if (typeof window === "undefined" || !("SpeechSynthesisUtterance" in window)) return null;
-    const item = new SpeechSynthesisUtterance(SAMPLE_PODCAST.text);
+    const item = new SpeechSynthesisUtterance(selectedPodcast.text);
     item.rate = 0.82;
     item.pitch = 0.9;
     item.volume = 0.9;
+    item.lang = selectedPodcast.title.match(/[\u0900-\u097F]/) ? "hi-IN" : "en-US";
     item.onend = () => setPlaying(false);
     return item;
-  }, []);
+  }, [selectedPodcast]);
 
   useEffect(() => {
     return () => {
@@ -47,9 +60,9 @@ export function PodcastView() {
   };
 
   const sharePodcast = async () => {
-    const message = `${SAMPLE_PODCAST.title}\n${SAMPLE_PODCAST.category} · ${SAMPLE_PODCAST.duration}\n\n${SAMPLE_PODCAST.text}\n\n— Nishu Stories`;
+    const message = `${selectedPodcast.title}\n${selectedPodcast.category} · ${selectedPodcast.duration}\n\n${selectedPodcast.text}\n\n— Nishu Stories`;
     if (navigator.share) {
-      await navigator.share({ title: SAMPLE_PODCAST.title, text: message }).catch(() => undefined);
+      await navigator.share({ title: selectedPodcast.title, text: message }).catch(() => undefined);
       return;
     }
     window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, "_blank", "noopener,noreferrer");
@@ -79,13 +92,33 @@ export function PodcastView() {
         </div>
 
         <article className="overflow-hidden rounded-3xl border border-primary/15 bg-book-page shadow-book ring-1 ring-primary/5">
+          <div className="flex gap-2 overflow-x-auto border-b border-border/60 bg-card/60 p-3 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            {PODCASTS.map((podcast, index) => (
+              <button
+                key={podcast.title}
+                type="button"
+                onClick={() => {
+                  if (canSpeak) window.speechSynthesis.cancel();
+                  setPlaying(false);
+                  setSelectedIndex(index);
+                }}
+                className={`focus-ring shrink-0 rounded-full border px-3 py-2 text-xs font-bold transition ${
+                  selectedIndex === index
+                    ? "border-primary bg-primary text-primary-foreground shadow-md shadow-primary/25"
+                    : "border-border/80 bg-background/70 text-book-ink hover:bg-background"
+                }`}
+              >
+                {podcast.category}
+              </button>
+            ))}
+          </div>
           <div className="relative min-h-[14rem] p-5">
             <div className="absolute inset-0 bg-gradient-to-br from-primary/12 via-transparent to-accent/15" aria-hidden />
             <div className="relative flex min-h-[11.5rem] flex-col justify-between">
               <div className="flex items-start justify-between gap-3">
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-background/80 px-3 py-1 text-[11px] font-bold text-primary shadow-sm backdrop-blur-sm">
                   <Moon className="h-3.5 w-3.5" aria-hidden />
-                  {SAMPLE_PODCAST.category}
+                  {selectedPodcast.category}
                 </span>
                 <button
                   type="button"
@@ -99,9 +132,9 @@ export function PodcastView() {
               </div>
 
               <div>
-                <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">{SAMPLE_PODCAST.narrator}</p>
-                <h3 className="mt-1 text-2xl font-extrabold leading-tight tracking-tight text-book-ink">{SAMPLE_PODCAST.title}</h3>
-                <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-muted-foreground">{SAMPLE_PODCAST.text}</p>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">{selectedPodcast.narrator}</p>
+                <h3 className="mt-1 text-2xl font-extrabold leading-tight tracking-tight text-book-ink">{selectedPodcast.title}</h3>
+                <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-muted-foreground">{selectedPodcast.text}</p>
               </div>
             </div>
           </div>
@@ -121,7 +154,7 @@ export function PodcastView() {
                 <span>{playing ? "Playing" : "Ready"}</span>
                 <span className="inline-flex items-center gap-1 tabular-nums">
                   <Timer className="h-3.5 w-3.5" aria-hidden />
-                  {SAMPLE_PODCAST.duration}
+                  {selectedPodcast.duration}
                 </span>
               </div>
               <div className="h-2 overflow-hidden rounded-full bg-secondary">
