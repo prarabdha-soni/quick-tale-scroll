@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import { BookOpenText, Feather, Home, Library, Upload } from "lucide-react";
+import { BookOpenText, Feather, Headphones, Home, Library, Upload } from "lucide-react";
 
 import { BooksView } from "@/components/app/BooksView";
 import { HomeView } from "@/components/app/HomeView";
+import { PodcastView } from "@/components/app/PodcastView";
 import { UploadView } from "@/components/app/UploadView";
 import { loadContinueReading, saveContinueReading, type ContinueReading } from "@/lib/continue-reading";
 import { StoryReader } from "@/components/app/StoryReader";
@@ -18,7 +19,7 @@ import { cn } from "@/lib/utils";
 
 const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
 
-type Tab = "home" | "story" | "books" | "upload";
+type Tab = "home" | "story" | "books" | "podcast" | "upload";
 
 const Index = () => {
   const initialPasted = loadPastedTale();
@@ -110,6 +111,7 @@ const Index = () => {
                   <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-primary">Nishu Stories</p>
                   <h1 className="text-lg font-extrabold leading-tight tracking-tight text-book-ink">
                     {tab === "books" && "Books"}
+                    {tab === "podcast" && "Podcast"}
                     {tab === "upload" && "Upload"}
                   </h1>
                 </>
@@ -134,13 +136,15 @@ const Index = () => {
           />
         ) : null}
         {tab === "books" ? <BooksView stories={mergedStories} onOpenStory={(i) => openStory(i, 0)} /> : null}
+        {tab === "podcast" ? <PodcastView /> : null}
       </div>
 
       <nav className="fixed bottom-0 left-0 right-0 z-30 mx-auto w-full max-w-md rounded-t-2xl border border-b-0 border-primary/10 bg-card/90 shadow-[0_-12px_40px_-12px_hsl(var(--primary)/0.12)] backdrop-blur-xl pb-[max(0.35rem,env(safe-area-inset-bottom))] pt-1.5">
-        <div className="grid grid-cols-4 gap-0.5 px-1 sm:gap-1 sm:px-2">
+        <div className="grid grid-cols-5 gap-0.5 px-1 sm:gap-1 sm:px-2">
           {tabBtn("home", "Home", <Home className="h-5 w-5" />)}
           {tabBtn("story", "Story", <BookOpenText className="h-5 w-5" />)}
           {tabBtn("books", "Books", <Library className="h-5 w-5" />)}
+          {tabBtn("podcast", "Podcast", <Headphones className="h-5 w-5" />)}
           {tabBtn("upload", "Upload", <Upload className="h-5 w-5" />)}
         </div>
       </nav>

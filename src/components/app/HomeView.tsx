@@ -1,5 +1,5 @@
 import { useMemo, useState, type ReactNode } from "react";
-import { BookOpen, ChevronRight, Clock, Library, List, Sparkles, Wand2, type LucideIcon } from "lucide-react";
+import { BookOpen, ChevronRight, Clock, Headphones, Library, List, Moon, Sparkles, Wand2, type LucideIcon } from "lucide-react";
 
 import { ShareStoryWhatsAppButton } from "@/components/app/ShareStoryWhatsAppButton";
 import { cn } from "@/lib/utils";
@@ -80,6 +80,34 @@ export function HomeView({ stories, onOpenStory, continueReading }: HomeViewProp
           <span className="text-muted-foreground"> — full list below.</span>
         </section>
       ) : null}
+
+      <section className="motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-2 motion-safe:duration-600 rounded-3xl border border-primary/15 bg-gradient-to-br from-card via-secondary/70 to-accent/10 p-4 shadow-book">
+        <div className="flex items-center justify-between gap-3">
+          <div>
+            <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-primary">For You</p>
+            <h2 className="mt-1 text-2xl font-extrabold leading-tight tracking-tight text-book-ink">Today&apos;s calm reads</h2>
+          </div>
+          <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-lg shadow-primary/25">
+            <Moon className="h-5 w-5" strokeWidth={2.25} aria-hidden />
+          </span>
+        </div>
+        <div className="mt-4 grid grid-cols-2 gap-2.5">
+          <button
+            type="button"
+            onClick={() => onOpenStory(heroIndex >= 0 ? heroIndex : 0, 0)}
+            className="focus-ring rounded-2xl border border-primary/10 bg-background/70 p-3 text-left shadow-sm transition hover:bg-background"
+          >
+            <BookOpen className="mb-2 h-5 w-5 text-primary" strokeWidth={2.25} aria-hidden />
+            <p className="line-clamp-1 text-sm font-extrabold text-book-ink">Featured tale</p>
+            <p className="mt-1 line-clamp-2 text-[11px] leading-snug text-muted-foreground">{hero.title}</p>
+          </button>
+          <div className="rounded-2xl border border-accent/15 bg-background/70 p-3 shadow-sm">
+            <Headphones className="mb-2 h-5 w-5 text-accent" strokeWidth={2.25} aria-hidden />
+            <p className="text-sm font-extrabold text-book-ink">Audio story</p>
+            <p className="mt-1 text-[11px] leading-snug text-muted-foreground">Calm podcast sample added below.</p>
+          </div>
+        </div>
+      </section>
 
       <section className="motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-2 motion-safe:duration-600 motion-safe:delay-75">
         <SectionTitle icon={BookOpen}>Continue reading</SectionTitle>
