@@ -112,9 +112,13 @@ export function HomeView({ stories, onOpenStory, continueReading }: HomeViewProp
       <section className="motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-2 motion-safe:duration-600 motion-safe:delay-75">
         <SectionTitle icon={BookOpen}>Continue reading</SectionTitle>
         {continueStory && continueReading ? (
-          <button
-            type="button"
+          <div
+            role="button"
+            tabIndex={0}
             onClick={() => onOpenStory(continueReading.storyIndex, continueReading.pageIndex)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") onOpenStory(continueReading.storyIndex, continueReading.pageIndex);
+            }}
             className="focus-ring group relative w-full overflow-hidden rounded-2xl border border-primary/20 bg-gradient-to-br from-card via-card to-primary/[0.07] p-1 text-left shadow-lg shadow-primary/10 transition-[transform,box-shadow] hover:border-primary/35 hover:shadow-xl hover:shadow-primary/15 active:scale-[0.995]"
           >
             <div className="flex items-stretch gap-3 rounded-xl bg-card/60 p-3 backdrop-blur-sm sm:gap-4 sm:p-4">
@@ -143,12 +147,20 @@ export function HomeView({ stories, onOpenStory, continueReading }: HomeViewProp
                   size="icon"
                   className="h-10 w-10 rounded-full border-border text-[#128C7E] hover:bg-[#25D366]/10"
                 />
-                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-md transition-transform group-hover:scale-105">
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onOpenStory(continueReading.storyIndex, continueReading.pageIndex);
+                  }}
+                  className="focus-ring flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-md transition-transform group-hover:scale-105"
+                  aria-label="Continue reading"
+                >
                   <ChevronRight className="h-5 w-5" strokeWidth={2.5} aria-hidden />
-                </span>
+                </button>
               </div>
             </div>
-          </button>
+          </div>
         ) : (
           <div className="rounded-2xl border border-dashed border-primary/25 bg-card/80 px-4 py-10 text-center">
             <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 ring-1 ring-primary/20">
