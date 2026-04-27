@@ -119,7 +119,7 @@ const Index = () => {
         </header>
       ) : null}
 
-      <div className={cn("flex min-h-0 flex-1 flex-col pb-24", tab === "story" ? "px-0 pb-28" : "px-3 sm:px-4")}>
+      <div className={cn("flex min-h-0 flex-1 flex-col", tab === "story" ? "px-0 pb-20" : "px-3 pb-24 sm:px-4")}>
         {tab === "home" ? <HomeView stories={mergedStories} onOpenStory={openStory} continueReading={continueReading} /> : null}
         {tab === "upload" ? (
           <UploadView pastedTale={pastedTale} onSavePastedTale={onSavePastedTale} onClearPastedTale={onClearPastedTale} />
