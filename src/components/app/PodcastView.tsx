@@ -1,57 +1,41 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Headphones, Moon, Pause, Play, Share2, Timer } from "lucide-react";
 
-const PODCASTS = [
-  {
-    title: "The Lake That Listened",
-    category: "Sleep story",
-    duration: "4 min",
-    narrator: "Nishu Calm",
-    text:
-      "Close your eyes and imagine a quiet lake under a silver moon. Every ripple carries away one small worry. A lantern floats from the shore, warm and gentle, guiding you toward a soft forest path. The night is safe, the air is cool, and every breath makes the world a little slower.",
-  },
-  {
-    title: "वो आख़िरी वॉइस नोट",
-    category: "Viral short",
-    duration: "2 min",
-    narrator: "Nishu Hindi",
-    text:
-      "रात के ठीक बारह बजे अनाया के फोन पर उसके भाई का वॉइस नोट आया। आवाज़ कांप रही थी—दीदी, दरवाज़ा मत खोलना। अनाया जम गई, क्योंकि उसका भाई तो शाम से घर के अंदर ही सो रहा था। तभी दरवाज़े पर दस्तक हुई, और अंदर कमरे से भाई की नींद में आवाज़ आई—दीदी, मेरा फोन कहाँ है?",
-  },
-] as const;
+const PODCAST = {
+  title: "भिखारी की दावत",
+  category: "Hindi audio story",
+  duration: "9:34",
+  narrator: "Real voice audio",
+  audioSrc: "/audio/bhikhari-ki-dawat.mp3",
+  text: "एक दिल छू लेने वाली हिंदी कहानी — भिखारी की दावत।",
+} as const;
 
 export function PodcastView() {
   const [playing, setPlaying] = useState(false);
-  const [selectedIndex, setSelectedIndex] = useState(1);
-  const selectedPodcast = PODCASTS[selectedIndex];
-  const canSpeak = typeof window !== "undefined" && "speechSynthesis" in window;
+  const [progress, setProgress] = useState(0);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     return () => {
-      if (canSpeak) window.speechSynthesis.cancel();
+      audioRef.current?.pause();
     };
-  }, [canSpeak]);
+  }, []);
 
-  const togglePlayback = () => {
-    if (!canSpeak || typeof window === "undefined" || !("SpeechSynthesisUtterance" in window)) return;
+  const togglePlayback = async () => {
+    const audio = audioRef.current;
+    if (!audio) return;
     if (playing) {
-      window.speechSynthesis.cancel();
+      audio.pause();
       setPlaying(false);
       return;
     }
-    const item = new SpeechSynthesisUtterance(selectedPodcast.text);
-    item.rate = 0.82;
-    item.pitch = 0.9;
-    item.volume = 1;
-    item.lang = selectedPodcast.title.match(/[\u0900-\u097F]/) ? "hi-IN" : "en-US";
-    item.onend = () => setPlaying(false);
-    window.speechSynthesis.cancel();
-    window.speechSynthesis.speak(item);
+    await audio.play();
     setPlaying(true);
   };
 
   const sharePodcast = () => {
-    const message = `${selectedPodcast.title}\n${selectedPodcast.category} · ${selectedPodcast.duration}\n\n${selectedPodcast.text}\n\n— Nishu Stories`;
+    const audioUrl = typeof window !== "undefined" ? `${window.location.origin}${PODCAST.audioSrc}` : PODCAST.audioSrc;
+    const message = `${PODCAST.title}\n${PODCAST.category} · ${PODCAST.duration}\n\n${PODCAST.text}\n${audioUrl}\n\n— Nishu Stories`;
     window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, "_blank", "noopener,noreferrer");
   };
 
@@ -75,37 +59,17 @@ export function PodcastView() {
       <section>
         <div className="mb-3 flex items-end justify-between gap-2">
           <h3 className="text-[13px] font-bold uppercase tracking-[0.14em] text-book-ink">Recommended today</h3>
-          <span className="rounded-full bg-accent/15 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-accent">Sample</span>
+          <span className="rounded-full bg-accent/15 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-accent">Real voice</span>
         </div>
 
         <article className="overflow-hidden rounded-3xl border border-primary/15 bg-book-page shadow-book ring-1 ring-primary/5">
-          <div className="flex gap-2 overflow-x-auto border-b border-border/60 bg-card/60 p-3 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            {PODCASTS.map((podcast, index) => (
-              <button
-                key={podcast.title}
-                type="button"
-                onClick={() => {
-                  if (canSpeak) window.speechSynthesis.cancel();
-                  setPlaying(false);
-                  setSelectedIndex(index);
-                }}
-                className={`focus-ring shrink-0 rounded-full border px-3 py-2 text-xs font-bold transition ${
-                  selectedIndex === index
-                    ? "border-primary bg-primary text-primary-foreground shadow-md shadow-primary/25"
-                    : "border-border/80 bg-background/70 text-book-ink hover:bg-background"
-                }`}
-              >
-                {podcast.category}
-              </button>
-            ))}
-          </div>
           <div className="relative min-h-[14rem] p-5">
             <div className="absolute inset-0 bg-gradient-to-br from-primary/12 via-transparent to-accent/15" aria-hidden />
             <div className="relative flex min-h-[11.5rem] flex-col justify-between">
               <div className="flex items-start justify-between gap-3">
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-background/80 px-3 py-1 text-[11px] font-bold text-primary shadow-sm backdrop-blur-sm">
                   <Moon className="h-3.5 w-3.5" aria-hidden />
-                  {selectedPodcast.category}
+                  {PODCAST.category}
                 </span>
                 <button
                   type="button"
@@ -119,18 +83,29 @@ export function PodcastView() {
               </div>
 
               <div>
-                <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">{selectedPodcast.narrator}</p>
-                <h3 className="mt-1 text-2xl font-extrabold leading-tight tracking-tight text-book-ink">{selectedPodcast.title}</h3>
-                <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-muted-foreground">{selectedPodcast.text}</p>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">{PODCAST.narrator}</p>
+                <h3 className="mt-1 text-2xl font-extrabold leading-tight tracking-tight text-book-ink">{PODCAST.title}</h3>
+                <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-muted-foreground">{PODCAST.text}</p>
               </div>
             </div>
           </div>
 
           <div className="flex items-center gap-3 border-t border-border/70 bg-card/70 p-4 backdrop-blur-sm">
+            <audio
+              ref={audioRef}
+              src={PODCAST.audioSrc}
+              preload="metadata"
+              onEnded={() => setPlaying(false)}
+              onPause={() => setPlaying(false)}
+              onPlay={() => setPlaying(true)}
+              onTimeUpdate={(e) => {
+                const audio = e.currentTarget;
+                setProgress(audio.duration ? (audio.currentTime / audio.duration) * 100 : 0);
+              }}
+            />
             <button
               type="button"
               onClick={togglePlayback}
-              disabled={!canSpeak}
               className="focus-ring flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/30 transition hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
               aria-label={playing ? "Pause sample audio story" : "Play sample audio story"}
             >
@@ -141,11 +116,11 @@ export function PodcastView() {
                 <span>{playing ? "Playing" : "Ready"}</span>
                 <span className="inline-flex items-center gap-1 tabular-nums">
                   <Timer className="h-3.5 w-3.5" aria-hidden />
-                  {selectedPodcast.duration}
+                  {PODCAST.duration}
                 </span>
               </div>
               <div className="h-2 overflow-hidden rounded-full bg-secondary">
-                <div className="h-full w-1/3 rounded-full bg-gradient-to-r from-primary to-accent transition-all" />
+                <div className="h-full rounded-full bg-gradient-to-r from-primary to-accent transition-all" style={{ width: `${progress}%` }} />
               </div>
             </div>
             <button
