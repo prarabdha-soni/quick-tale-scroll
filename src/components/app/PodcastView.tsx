@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Headphones, Moon, Pause, Play, Share2, Timer } from "lucide-react";
 
 const PODCASTS = [
@@ -26,17 +26,6 @@ export function PodcastView() {
   const selectedPodcast = PODCASTS[selectedIndex];
   const canSpeak = typeof window !== "undefined" && "speechSynthesis" in window;
 
-  const utterance = useMemo(() => {
-    if (typeof window === "undefined" || !("SpeechSynthesisUtterance" in window)) return null;
-    const item = new SpeechSynthesisUtterance(selectedPodcast.text);
-    item.rate = 0.82;
-    item.pitch = 0.9;
-    item.volume = 0.9;
-    item.lang = selectedPodcast.title.match(/[\u0900-\u097F]/) ? "hi-IN" : "en-US";
-    item.onend = () => setPlaying(false);
-    return item;
-  }, [selectedPodcast]);
-
   useEffect(() => {
     return () => {
       if (canSpeak) window.speechSynthesis.cancel();
@@ -44,27 +33,25 @@ export function PodcastView() {
   }, [canSpeak]);
 
   const togglePlayback = () => {
-    if (!canSpeak || !utterance) return;
+    if (!canSpeak || typeof window === "undefined" || !("SpeechSynthesisUtterance" in window)) return;
     if (playing) {
-      window.speechSynthesis.pause();
+      window.speechSynthesis.cancel();
       setPlaying(false);
       return;
     }
-    if (window.speechSynthesis.paused) {
-      window.speechSynthesis.resume();
-    } else {
-      window.speechSynthesis.cancel();
-      window.speechSynthesis.speak(utterance);
-    }
+    const item = new SpeechSynthesisUtterance(selectedPodcast.text);
+    item.rate = 0.82;
+    item.pitch = 0.9;
+    item.volume = 1;
+    item.lang = selectedPodcast.title.match(/[\u0900-\u097F]/) ? "hi-IN" : "en-US";
+    item.onend = () => setPlaying(false);
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(item);
     setPlaying(true);
   };
 
-  const sharePodcast = async () => {
+  const sharePodcast = () => {
     const message = `${selectedPodcast.title}\n${selectedPodcast.category} · ${selectedPodcast.duration}\n\n${selectedPodcast.text}\n\n— Nishu Stories`;
-    if (navigator.share) {
-      await navigator.share({ title: selectedPodcast.title, text: message }).catch(() => undefined);
-      return;
-    }
     window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, "_blank", "noopener,noreferrer");
   };
 
@@ -124,8 +111,8 @@ export function PodcastView() {
                   type="button"
                   onClick={sharePodcast}
                   className="focus-ring flex h-10 w-10 items-center justify-center rounded-full bg-background/85 text-primary shadow-md backdrop-blur-sm transition hover:bg-background"
-                  aria-label="Share podcast"
-                  title="Share podcast"
+                  aria-label="Share podcast on WhatsApp"
+                  title="Share on WhatsApp"
                 >
                   <Share2 className="h-5 w-5" strokeWidth={2.25} aria-hidden />
                 </button>
@@ -161,6 +148,15 @@ export function PodcastView() {
                 <div className="h-full w-1/3 rounded-full bg-gradient-to-r from-primary to-accent transition-all" />
               </div>
             </div>
+            <button
+              type="button"
+              onClick={sharePodcast}
+              className="focus-ring hidden shrink-0 items-center gap-2 rounded-full border border-accent/20 bg-accent/10 px-3 py-2 text-xs font-bold text-accent transition hover:bg-accent/15 sm:inline-flex"
+              aria-label="Share podcast on WhatsApp"
+            >
+              <Share2 className="h-4 w-4" strokeWidth={2.25} aria-hidden />
+              WhatsApp
+            </button>
           </div>
         </article>
       </section>
