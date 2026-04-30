@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { BookOpenText, Feather, Headphones, Home, Upload } from "lucide-react";
 
 import { HomeView } from "@/components/app/HomeView";
@@ -7,13 +7,7 @@ import { UploadView } from "@/components/app/UploadView";
 import { loadContinueReading, saveContinueReading, type ContinueReading } from "@/lib/continue-reading";
 import { StoryReader } from "@/components/app/StoryReader";
 import { stories as catalogStories } from "@/data/stories";
-import {
-  clearPastedTale,
-  loadPastedTale,
-  mergeCatalogWithPasted,
-  savePastedTale,
-  USER_TALE_INSERT_INDEX,
-} from "@/lib/user-pasted-tale";
+import { useApprovedStories } from "@/hooks/use-approved-stories";
 import { cn } from "@/lib/utils";
 
 const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
@@ -21,14 +15,13 @@ const clamp = (value: number, min: number, max: number) => Math.min(Math.max(val
 type Tab = "home" | "story" | "podcast" | "upload";
 
 const Index = () => {
-  const initialPasted = loadPastedTale();
   const [tab, setTab] = useState<Tab>("home");
-  const [pastedTale, setPastedTale] = useState(initialPasted);
-  const hadPastedRef = useRef(!!initialPasted);
+  const { stories: approvedStories } = useApprovedStories();
   const [storyIndex, setStoryIndex] = useState(() => loadContinueReading()?.storyIndex ?? 0);
   const [pageIndex, setPageIndex] = useState(() => loadContinueReading()?.pageIndex ?? 0);
 
-  const mergedStories = useMemo(() => mergeCatalogWithPasted(catalogStories, pastedTale), [pastedTale]);
+  // Built-in tales first, then approved community submissions.
+  const mergedStories = useMemo(() => [...catalogStories, ...approvedStories], [approvedStories]);
 
   useEffect(() => {
     saveContinueReading({ storyIndex, pageIndex });
@@ -46,36 +39,13 @@ const Index = () => {
   }, [storyIndex, pageIndex]);
 
   const openStory = (si: number, pi = 0) => {
-    const sIdx = clamp(si, 0, mergedStories.length - 1);
+    const sIdx = clamp(si, 0, Math.max(0, mergedStories.length - 1));
     const story = mergedStories[sIdx];
-    const pIdx = clamp(pi, 0, story.pages.length - 1);
+    const pIdx = story ? clamp(pi, 0, story.pages.length - 1) : 0;
     setStoryIndex(sIdx);
     setPageIndex(pIdx);
     setTab("story");
   };
-
-  const onSavePastedTale = useCallback((title: string, body: string) => {
-    savePastedTale({ title, body });
-    if (!hadPastedRef.current) {
-      setStoryIndex((i) => (i >= USER_TALE_INSERT_INDEX ? i + 1 : i));
-      hadPastedRef.current = true;
-    }
-    setPastedTale({ title, body });
-  }, []);
-
-  const onClearPastedTale = useCallback(() => {
-    if (!hadPastedRef.current) return;
-    clearPastedTale();
-    setPastedTale(null);
-    const prev = storyIndex;
-    if (prev === USER_TALE_INSERT_INDEX) {
-      setStoryIndex(0);
-      setPageIndex(0);
-    } else if (prev > USER_TALE_INSERT_INDEX) {
-      setStoryIndex(prev - 1);
-    }
-    hadPastedRef.current = false;
-  }, [storyIndex]);
 
   const tabBtn = (id: Tab, label: string, icon: ReactNode) => (
     <button
@@ -121,9 +91,7 @@ const Index = () => {
 
       <div className={cn("flex min-h-0 flex-1 flex-col", tab === "story" ? "px-0 pb-20" : "px-3 pb-24 sm:px-4")}>
         {tab === "home" ? <HomeView stories={mergedStories} onOpenStory={openStory} continueReading={continueReading} /> : null}
-        {tab === "upload" ? (
-          <UploadView pastedTale={pastedTale} onSavePastedTale={onSavePastedTale} onClearPastedTale={onClearPastedTale} />
-        ) : null}
+        {tab === "upload" ? <UploadView /> : null}
         {tab === "story" ? (
           <StoryReader
             stories={mergedStories}
