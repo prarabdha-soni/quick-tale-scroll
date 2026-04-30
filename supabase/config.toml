@@ -1,1 +1,7 @@
 project_id = "werfzdhvpzpmfwwzgytv"
+
+[functions.submit-story]
+verify_jwt = false
+
+[functions.approve-story]
+verify_jwt = false
