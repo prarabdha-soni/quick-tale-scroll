@@ -1,0 +1,1 @@
+revoke execute on function public.enforce_pending_on_insert() from public, anon, authenticated;
