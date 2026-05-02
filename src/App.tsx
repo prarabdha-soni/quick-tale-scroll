@@ -7,6 +7,13 @@ import Index from "./pages/Index.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import AuthPage from "./pages/Auth.tsx";
 import AdminPage from "./pages/Admin.tsx";
+import WelcomePage from "./pages/Welcome.tsx";
+import { Navigate } from "react-router-dom";
+
+const HomeGate = () => {
+  const seen = typeof window !== "undefined" && localStorage.getItem("nishu-welcome-seen") === "1";
+  return seen ? <Index /> : <Navigate to="/welcome" replace />;
+};
 
 const queryClient = new QueryClient();
 
