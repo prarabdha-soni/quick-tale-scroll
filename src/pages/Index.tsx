@@ -62,7 +62,7 @@ const Index = () => {
   );
 
   return (
-    <main className="relative mx-auto flex min-h-dvh w-full max-w-md flex-col bg-library font-sans text-foreground writing-crisp">
+    <main className="relative mx-auto flex h-dvh w-full max-w-md flex-col overflow-hidden bg-library font-sans text-foreground writing-crisp">
       {tab !== "story" ? (
         <header className="flex shrink-0 items-center justify-between gap-3 border-b border-primary/10 bg-card/75 px-4 py-3 shadow-sm shadow-primary/5 backdrop-blur-xl pt-[max(0.75rem,env(safe-area-inset-top))]">
           <div className="flex items-center gap-2.5">
