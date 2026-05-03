@@ -97,57 +97,6 @@ export function HomeView({ stories, onOpenStory, continueReading }: HomeViewProp
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-8 overflow-y-auto px-0 pb-6 pt-1 sm:px-0">
       {/* Hero — editorial / global */}
-      <section className="motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-3 motion-safe:duration-700 relative overflow-hidden rounded-[1.65rem] border border-primary/12 bg-card/70 shadow-[0_24px_80px_-32px_hsl(var(--primary)/0.35)] backdrop-blur-xl">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 opacity-[0.97]"
-          style={{
-            background:
-              "radial-gradient(120% 90% at 0% -10%, hsl(var(--primary) / 0.16), transparent 52%), radial-gradient(90% 70% at 100% 0%, hsl(195 85% 50% / 0.12), transparent 48%), linear-gradient(165deg, hsl(var(--card)) 0%, hsl(var(--secondary) / 0.55) 100%)",
-          }}
-        />
-        <div className="pointer-events-none absolute -right-24 top-0 h-56 w-56 rounded-full bg-gradient-to-br from-primary/25 to-transparent blur-3xl" aria-hidden />
-        <div className="pointer-events-none absolute -bottom-16 -left-12 h-44 w-44 rounded-full bg-accent/15 blur-2xl" aria-hidden />
-
-        <div className="relative px-5 pb-6 pt-7 sm:px-7 sm:pb-7 sm:pt-8">
-          <div className="flex flex-wrap items-start justify-between gap-4">
-            <div className="min-w-0 flex-1 space-y-3">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/15 bg-primary/[0.08] px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.22em] text-primary">
-                  <Globe2 className="h-3 w-3 opacity-90" strokeWidth={2.25} aria-hidden />
-                  Worldwide
-                </span>
-                <span className="text-[10px] font-medium uppercase tracking-[0.18em] text-muted-foreground">Sleep studio</span>
-              </div>
-              <h2 className="font-sans text-[1.65rem] font-extrabold leading-[1.08] tracking-tight text-book-ink sm:text-[1.85rem]">
-                Wind down,{" "}
-                <span className="bg-gradient-to-r from-primary via-violet-600 to-accent bg-clip-text text-transparent">everywhere</span>
-              </h2>
-              <p className="max-w-[26rem] text-[15px] leading-relaxed text-muted-foreground">
-                Calm, cinematic pacing—crafted for readers across languages and time zones. Hindi and English sleep tales with gentle fades between
-                pages.
-              </p>
-              <p className="text-sm leading-relaxed text-book-ink/85">हिंदी और अंग्रेज़ी में नरम नींद की कहानियाँ। धीमे पेज। शांत अंत।</p>
-            </div>
-            <div className="flex h-[4.25rem] w-[4.25rem] shrink-0 items-center justify-center rounded-2xl border border-white/25 bg-gradient-to-br from-primary to-violet-700 text-primary-foreground shadow-lg shadow-primary/30">
-              <Moon className="h-[1.65rem] w-[1.65rem]" strokeWidth={2} aria-hidden />
-            </div>
-          </div>
-
-          <div className="mt-6 flex flex-wrap gap-2">
-            {FEATURE_PILLS.map(({ Icon, label }) => (
-              <span
-                key={label}
-                className="inline-flex items-center gap-1.5 rounded-full border border-border/70 bg-background/55 px-3 py-1.5 text-[11px] font-medium text-book-ink/90 shadow-sm backdrop-blur-sm"
-              >
-                <Icon className="h-3.5 w-3.5 text-primary" strokeWidth={2} aria-hidden />
-                {label}
-              </span>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Featured */}
       <section className="motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-3 motion-safe:duration-700 motion-safe:delay-75">
         <SectionTitle icon={Sparkles}>Tonight&apos;s story</SectionTitle>
