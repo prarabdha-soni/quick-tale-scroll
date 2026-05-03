@@ -64,12 +64,6 @@ const THOUGHTS = [
   "Wherever you are on the map, rest belongs here too.",
 ] as const;
 
-const FEATURE_PILLS = [
-  { Icon: Timer, label: "5s cadence" },
-  { Icon: Sparkles, label: "Soft fades" },
-  { Icon: Globe2, label: "HI · EN" },
-] as const;
-
 export function HomeView({ stories, onOpenStory, continueReading }: HomeViewProps) {
   const hero = stories[0];
   const heroIndex = 0;
