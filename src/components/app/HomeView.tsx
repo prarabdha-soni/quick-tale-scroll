@@ -1,5 +1,5 @@
 import { useMemo, useState, type ReactNode } from "react";
-import { BookOpen, ChevronRight, Clock, Globe2, Moon, Sparkles, Timer, type LucideIcon } from "lucide-react";
+import { BookOpen, ChevronRight, Clock, Globe2, Moon, Sparkles, type LucideIcon } from "lucide-react";
 
 import { ShareStoryWhatsAppButton } from "@/components/app/ShareStoryWhatsAppButton";
 import { cn } from "@/lib/utils";
