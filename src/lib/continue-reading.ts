@@ -1,4 +1,5 @@
-const STORAGE_KEY = "qts-continue";
+/** Bumped when catalog order or story ids change so indices stay meaningful. */
+const STORAGE_KEY = "qts-continue-v2";
 
 export type ContinueReading = { storyIndex: number; pageIndex: number };
 

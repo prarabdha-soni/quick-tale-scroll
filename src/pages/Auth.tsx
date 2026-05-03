@@ -12,8 +12,8 @@ export default function AuthPage() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [mode, setMode] = useState<"signin" | "signup">("signin");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("prarabdha21@gmail.com");
+  const [password, setPassword] = useState("rotation21");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {

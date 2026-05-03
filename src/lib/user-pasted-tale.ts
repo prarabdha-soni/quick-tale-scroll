@@ -59,7 +59,6 @@ export function talePayloadToStory(payload: PastedTalePayload): Story {
     title: payload.title.trim(),
     author: "You",
     genre: "Your tale",
-    coverImage: "/stories/aakhiri-library.png",
     coverAlt: "Your pasted tale",
     tags: ["Personal"],
     hook,

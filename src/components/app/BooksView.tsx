@@ -13,12 +13,23 @@ type BooksViewProps = {
 
 function CoverThumb({ story, className }: { story: Story; className?: string }) {
   const [loaded, setLoaded] = useState(false);
+  if (!story.coverImage) {
+    return (
+      <div
+        className={cn(
+          "relative flex shrink-0 items-center justify-center overflow-hidden rounded-md border border-border bg-gradient-to-br from-indigo-950 to-slate-950 ring-1 ring-border/50",
+          className,
+        )}
+        aria-hidden
+      />
+    );
+  }
   return (
     <div className={cn("relative shrink-0 overflow-hidden rounded-md border border-border bg-muted ring-1 ring-border/50", className)}>
       {!loaded ? <div className="absolute inset-0 animate-pulse bg-muted" aria-hidden /> : null}
       <img
         src={story.coverImage}
-        alt={story.coverAlt}
+        alt={story.coverAlt ?? story.title}
         className={cn("h-full w-full object-cover transition-opacity duration-200", loaded ? "opacity-100" : "opacity-0")}
         loading="lazy"
         decoding="async"

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
-import { ArrowLeft, Bookmark, ChevronLeft, ChevronRight, Coffee, Moon, Sun, Type } from "lucide-react";
+import { ArrowLeft, Bookmark, ChevronLeft, ChevronRight, Coffee, Moon, Pause, Play, Sun, Timer, Type } from "lucide-react";
 
 import { ShareStoryWhatsAppButton } from "@/components/app/ShareStoryWhatsAppButton";
 import { Button } from "@/components/ui/button";
@@ -16,6 +16,8 @@ const FONT_STEPS: Record<FontScale, string> = {
   3: "text-[1.72rem] leading-[1.68] sm:text-[1.82rem]",
 };
 
+const AUTO_MS = 5000;
+
 type StoryReaderProps = {
   stories: Story[];
   storyIndex: number;
@@ -30,6 +32,9 @@ export function StoryReader({ stories, storyIndex, pageIndex, onPageIndex, onNav
 
   const [prefs, setPrefs] = useState(loadReaderPreferences);
   const { theme, fontScale } = prefs;
+
+  const [autoAdvance, setAutoAdvance] = useState(true);
+  const [showEnding, setShowEnding] = useState(false);
 
   const setTheme = useCallback((t: ReaderTheme) => {
     setPrefs((p) => {
@@ -61,21 +66,25 @@ export function StoryReader({ stories, storyIndex, pageIndex, onPageIndex, onNav
   const scrollRaf = useRef<number | null>(null);
   const prevStoryKey = useRef<number | null>(null);
 
-  const readPct = totalBlocks <= 1 ? 100 : clamp((pageIndex / (totalBlocks - 1)) * 100, 0, 100);
+  const readPct =
+    showEnding || totalBlocks <= 1 ? 100 : clamp((pageIndex / (totalBlocks - 1)) * 100, 0, 100);
   const approxBlock = pageIndex + 1;
   const minutesLeft = Math.max(
     0,
     Math.ceil(((totalBlocks - pageIndex - 1) / Math.max(1, totalBlocks)) * story.estimatedMinutes),
   );
 
-  const scrollCarouselToPage = useCallback((index: number, behavior: ScrollBehavior) => {
-    const el = carouselRef.current;
-    if (!el) return;
-    const w = el.clientWidth;
-    if (w <= 0) return;
-    const i = clamp(index, 0, totalBlocks - 1);
-    el.scrollTo({ left: i * w, behavior });
-  }, [totalBlocks]);
+  const scrollCarouselToPage = useCallback(
+    (index: number, behavior: ScrollBehavior) => {
+      const el = carouselRef.current;
+      if (!el) return;
+      const w = el.clientWidth;
+      if (w <= 0) return;
+      const i = clamp(index, 0, totalBlocks - 1);
+      el.scrollTo({ left: i * w, behavior });
+    },
+    [totalBlocks],
+  );
 
   const syncIndexFromScroll = useCallback(() => {
     const el = carouselRef.current;
@@ -138,13 +147,35 @@ export function StoryReader({ stories, storyIndex, pageIndex, onPageIndex, onNav
     return () => el.removeEventListener("scrollend", onScrollEnd);
   }, [syncIndexFromScroll, storyIndex, totalBlocks]);
 
+  useEffect(() => {
+    if (!autoAdvance || showEnding) return;
+    const t = window.setTimeout(() => {
+      if (pageIndex >= totalBlocks - 1) {
+        setShowEnding(true);
+        return;
+      }
+      onPageIndex(pageIndex + 1);
+    }, AUTO_MS);
+    return () => window.clearTimeout(t);
+  }, [autoAdvance, onPageIndex, pageIndex, showEnding, totalBlocks]);
+
   const goPrev = useCallback(() => {
+    setShowEnding(false);
     onPageIndex(clamp(pageIndex - 1, 0, totalBlocks - 1));
   }, [onPageIndex, pageIndex, totalBlocks]);
 
   const goNext = useCallback(() => {
+    if (pageIndex >= totalBlocks - 1) {
+      setShowEnding(true);
+      return;
+    }
     onPageIndex(clamp(pageIndex + 1, 0, totalBlocks - 1));
   }, [onPageIndex, pageIndex, totalBlocks]);
+
+  const restartStory = useCallback(() => {
+    setShowEnding(false);
+    onPageIndex(0);
+  }, [onPageIndex]);
 
   const themeIcon =
     theme === "light" ? <Sun className="h-5 w-5" /> : theme === "sepia" ? <Coffee className="h-5 w-5" /> : <Moon className="h-5 w-5" />;
@@ -157,14 +188,47 @@ export function StoryReader({ stories, storyIndex, pageIndex, onPageIndex, onNav
         : "reader-surface-dark reader-bg";
 
   return (
-    <div className={cn("flex min-h-0 flex-1 flex-col font-sans", surface)}>
+    <div className={cn("relative flex min-h-0 flex-1 flex-col font-sans", surface)}>
+      {showEnding ? (
+        <div
+          className="absolute inset-0 z-40 flex flex-col items-center justify-center gap-8 bg-[hsl(258_28%_8%/0.92)] px-8 text-center backdrop-blur-md motion-safe:animate-in motion-safe:fade-in motion-safe:duration-700"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="sleep-ending-title"
+        >
+          <Moon className="h-14 w-14 text-primary/80" strokeWidth={1.25} aria-hidden />
+          <p id="sleep-ending-title" className="max-w-sm font-serif text-2xl font-medium leading-relaxed text-[hsl(270_22%_94%)] sm:text-3xl">
+            You can close your eyes now…
+          </p>
+          <p className="max-w-xs text-sm text-[hsl(265_12%_62%)]">That completes tonight&apos;s sleep loop. Rest well.</p>
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <Button type="button" variant="secondary" className="rounded-full px-6" onClick={restartStory}>
+              Listen again
+            </Button>
+            <Button type="button" variant="ghost" className="rounded-full text-[hsl(270_22%_88%)] hover:bg-white/10" onClick={onNavigateHome}>
+              Home
+            </Button>
+          </div>
+        </div>
+      ) : null}
+
       <div className="reader-border shrink-0 border-b bg-primary/[0.06] px-2 pt-[max(0.5rem,env(safe-area-inset-top))] backdrop-blur-md">
-        <div className="mx-auto flex max-w-3xl items-center gap-1 py-2 sm:gap-2">
+        <div className="mx-auto flex max-w-3xl flex-wrap items-center justify-center gap-1 py-2 sm:gap-2">
           <Button type="button" variant="ghost" size="icon" className="focus-ring shrink-0 reader-ink" aria-label="Back to home" onClick={onNavigateHome}>
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <h2 className="reader-ink min-w-0 flex-1 truncate text-center font-serif text-base font-semibold sm:text-lg">{story.title}</h2>
           <ShareStoryWhatsAppButton story={story} pageIndex={pageIndex} variant="ghost" size="icon" className="shrink-0" />
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className={cn("focus-ring shrink-0 reader-ink", autoAdvance && "text-primary")}
+            aria-label={autoAdvance ? "Pause auto-advance (5 seconds per page)" : "Resume auto-advance"}
+            onClick={() => setAutoAdvance((v) => !v)}
+          >
+            {autoAdvance ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5" />}
+          </Button>
           <Button type="button" variant="ghost" size="icon" className="focus-ring reader-ink" aria-label={`Text size step ${fontScale + 1} of 4`} onClick={cycleFont}>
             <Type className="h-5 w-5" />
           </Button>
@@ -172,7 +236,9 @@ export function StoryReader({ stories, storyIndex, pageIndex, onPageIndex, onNav
             {themeIcon}
           </Button>
         </div>
-        <div className="mx-auto flex max-w-3xl items-center gap-3 px-1 pb-2">
+        <div className="mx-auto flex max-w-3xl items-center gap-2 px-1 pb-2">
+          <Timer className="reader-muted h-3.5 w-3.5 shrink-0" aria-hidden />
+          <span className="reader-muted text-[10px] font-medium">5s / page</span>
           <div className="reader-border h-0.5 flex-1 overflow-hidden rounded-full bg-black/10">
             <div className="h-full rounded-full bg-primary transition-[width] motion-reduce:transition-none" style={{ width: `${readPct}%` }} />
           </div>
@@ -198,66 +264,53 @@ export function StoryReader({ stories, storyIndex, pageIndex, onPageIndex, onNav
             onTouchCancel={() => requestAnimationFrame(() => syncIndexFromScroll())}
             style={{ touchAction: "pan-x" }}
             className="reader-bg relative z-0 flex min-h-0 flex-1 snap-x snap-mandatory flex-nowrap overflow-x-auto overflow-y-hidden overscroll-x-contain [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-            aria-label="Story pages — swipe left or right between sections, or use the buttons below"
+            aria-label="Sleep story — swipe between pages or wait for gentle auto-advance"
           >
-            {story.pages.map((page, idx) => (
-              <section
-                key={`${storyIndex}-p-${idx}`}
-                className="min-w-full w-full shrink-0 snap-start snap-always"
-                aria-label={`Part ${idx + 1} of ${totalBlocks}`}
-              >
-                <div
-                  className="reader-bg flex h-full max-h-full min-h-0 flex-col overflow-y-auto overscroll-y-contain px-5 pb-8 pt-6 sm:px-8 sm:pb-10 sm:pt-8 md:px-12"
-                  style={{ touchAction: "pan-y pinch-zoom" }}
+            {story.pages.map((page, idx) => {
+              const isActive = idx === pageIndex && !showEnding;
+              return (
+                <section
+                  key={`${storyIndex}-p-${idx}`}
+                  className="min-w-full w-full shrink-0 snap-start snap-always"
+                  aria-label={`Part ${idx + 1} of ${totalBlocks}`}
                 >
-                  {idx === 0 ? (
-                    <header className="reader-border mb-6 shrink-0 border-b pb-5">
-                      <p className="reader-primary text-xs uppercase tracking-[0.22em]">{story.genre}</p>
-                      <div className="mt-2 flex items-start justify-between gap-3">
-                        <h1 className="reader-ink max-w-prose font-serif text-2xl font-bold leading-tight sm:text-3xl">{story.title}</h1>
-                        <Bookmark className="reader-primary mt-1 h-5 w-5 shrink-0 opacity-80" />
-                      </div>
-                      <p className="reader-muted mt-2 text-sm">{story.hook}</p>
-                    </header>
-                  ) : (
-                    <div className="reader-muted mb-5 flex shrink-0 items-center gap-2 text-[11px] font-medium uppercase tracking-[0.14em]">
-                      <span className="reader-border h-px flex-1 bg-current opacity-30" aria-hidden />
-                      Part {idx + 1}
-                      <span className="reader-border h-px flex-1 bg-current opacity-30" aria-hidden />
-                    </div>
-                  )}
-
-                  <div className="mx-auto w-full max-w-prose flex-1 pb-4">
-                    {page.image ? (
-                      <figure className="mb-5 shrink-0">
-                        <div className="reader-border overflow-hidden rounded-lg border shadow-sm">
-                          <img
-                            src={page.image.src}
-                            alt={page.image.alt}
-                            className="max-h-[min(38vh,280px)] w-full object-cover sm:max-h-[min(42vh,340px)]"
-                            loading="lazy"
-                            decoding="async"
-                          />
+                  <div
+                    className="reader-bg flex h-full max-h-full min-h-0 flex-col overflow-y-auto overscroll-y-contain px-5 pb-8 pt-6 sm:px-8 sm:pb-10 sm:pt-8 md:px-12"
+                    style={{ touchAction: "pan-y pinch-zoom" }}
+                  >
+                    {idx === 0 ? (
+                      <header className="reader-border mb-6 shrink-0 border-b pb-5">
+                        <p className="reader-primary text-xs uppercase tracking-[0.22em]">{story.genre}</p>
+                        <div className="mt-2 flex items-start justify-between gap-3">
+                          <h1 className="reader-ink max-w-prose font-serif text-2xl font-bold leading-tight sm:text-3xl">{story.title}</h1>
+                          <Bookmark className="reader-primary mt-1 h-5 w-5 shrink-0 opacity-80" />
                         </div>
-                        <figcaption className="reader-muted mt-2 text-center text-[10px] uppercase tracking-[0.16em]">
-                          {/[\u0900-\u097F]/.test(story.title) ? "दृश्य" : "Illustration"}
-                        </figcaption>
-                      </figure>
-                    ) : null}
-                    <p
-                      className={cn(
-                        "reader-ink font-serif",
-                        FONT_STEPS[fontScale],
-                        idx === 0 &&
-                          "first-letter:float-left first-letter:mr-2 first-letter:mt-1 first-letter:font-serif first-letter:text-[3rem] first-letter:font-bold first-letter:leading-[0.85] first-letter:text-primary sm:first-letter:text-[3.35rem]",
-                      )}
-                    >
-                      {page.text}
-                    </p>
+                        <p className="reader-muted mt-2 text-sm">{story.hook}</p>
+                      </header>
+                    ) : (
+                      <div className="reader-muted mb-5 flex shrink-0 items-center gap-2 text-[11px] font-medium uppercase tracking-[0.14em]">
+                        <span className="reader-border h-px flex-1 bg-current opacity-30" aria-hidden />
+                        Part {idx + 1}
+                        <span className="reader-border h-px flex-1 bg-current opacity-30" aria-hidden />
+                      </div>
+                    )}
+
+                    <div className="mx-auto w-full max-w-prose flex-1 pb-4">
+                      <p
+                        key={isActive ? `fade-${pageIndex}` : `idle-${idx}`}
+                        className={cn(
+                          "reader-ink whitespace-pre-line font-serif motion-reduce:opacity-100",
+                          FONT_STEPS[fontScale],
+                          isActive && "sleep-text-fade",
+                        )}
+                      >
+                        {page.text}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              </section>
-            ))}
+                </section>
+              );
+            })}
           </div>
 
           <div className="reader-border reader-bg relative z-[2] flex shrink-0 items-center justify-between gap-2 border-t px-2 py-2 pb-3 sm:px-4">
@@ -267,25 +320,24 @@ export function StoryReader({ stories, storyIndex, pageIndex, onPageIndex, onNav
               size="sm"
               className="focus-ring reader-border reader-ink gap-1 border bg-black/[0.03] px-3 sm:px-4"
               disabled={pageIndex <= 0}
-              aria-label="Previous section"
+              aria-label="Previous page"
               onClick={goPrev}
             >
               <ChevronLeft className="h-4 w-4" />
               <span className="hidden sm:inline">Prev</span>
             </Button>
             <p className="reader-muted min-w-0 truncate text-center text-[11px] tabular-nums sm:text-xs">
-              Swipe sideways · {approxBlock} / {totalBlocks}
+              Swipe · {approxBlock} / {totalBlocks}
             </p>
             <Button
               type="button"
               variant="outline"
               size="sm"
               className="focus-ring reader-border reader-ink gap-1 border bg-black/[0.03] px-3 sm:px-4"
-              disabled={pageIndex >= totalBlocks - 1}
-              aria-label="Next section"
+              aria-label={pageIndex >= totalBlocks - 1 ? "End — close your eyes screen" : "Next page"}
               onClick={goNext}
             >
-              <span className="hidden sm:inline">Next</span>
+              <span className="hidden sm:inline">{pageIndex >= totalBlocks - 1 ? "Rest" : "Next"}</span>
               <ChevronRight className="h-4 w-4" />
             </Button>
           </div>

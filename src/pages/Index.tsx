@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
-import { BookOpenText, Feather, Headphones, Home, Upload } from "lucide-react";
+import { BookOpenText, Feather, Globe2, Headphones, Home, Upload } from "lucide-react";
 
 import { HomeView } from "@/components/app/HomeView";
 import { PodcastView } from "@/components/app/PodcastView";
@@ -7,7 +7,6 @@ import { UploadView } from "@/components/app/UploadView";
 import { loadContinueReading, saveContinueReading, type ContinueReading } from "@/lib/continue-reading";
 import { StoryReader } from "@/components/app/StoryReader";
 import { stories as catalogStories } from "@/data/stories";
-import { useApprovedStories } from "@/hooks/use-approved-stories";
 import { cn } from "@/lib/utils";
 
 const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
@@ -16,12 +15,9 @@ type Tab = "home" | "story" | "podcast" | "upload";
 
 const Index = () => {
   const [tab, setTab] = useState<Tab>("home");
-  const { stories: approvedStories } = useApprovedStories();
+  const mergedStories = useMemo(() => catalogStories, []);
   const [storyIndex, setStoryIndex] = useState(() => loadContinueReading()?.storyIndex ?? 0);
   const [pageIndex, setPageIndex] = useState(() => loadContinueReading()?.pageIndex ?? 0);
-
-  // Built-in tales first, then approved community submissions.
-  const mergedStories = useMemo(() => [...catalogStories, ...approvedStories], [approvedStories]);
 
   useEffect(() => {
     saveContinueReading({ storyIndex, pageIndex });
@@ -62,22 +58,27 @@ const Index = () => {
   );
 
   return (
-    <main className={cn("relative mx-auto flex w-full max-w-md flex-col bg-library font-sans text-foreground writing-crisp", tab === "story" ? "h-[100dvh] overflow-hidden" : "min-h-dvh")}>
+    <main
+      className={cn(
+        "relative mx-auto flex w-full max-w-md flex-col bg-library font-sans text-foreground writing-crisp",
+        tab === "story" ? "h-[100dvh] overflow-hidden" : "min-h-dvh",
+      )}
+    >
       {tab !== "story" ? (
-        <header className="flex shrink-0 items-center justify-between gap-3 border-b border-primary/10 bg-card/75 px-4 py-3 shadow-sm shadow-primary/5 backdrop-blur-xl pt-[max(0.75rem,env(safe-area-inset-top))]">
-          <div className="flex items-center gap-2.5">
-            <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-primary/20 bg-gradient-to-br from-card to-primary/10 shadow-md shadow-primary/10">
+        <header className="flex shrink-0 items-center justify-between gap-3 border-b border-primary/10 bg-card/80 px-4 py-3 shadow-sm shadow-primary/5 backdrop-blur-xl pt-[max(0.75rem,env(safe-area-inset-top))]">
+          <div className="flex min-w-0 flex-1 items-center gap-2.5">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-primary/20 bg-gradient-to-br from-card to-primary/12 shadow-md shadow-primary/15 ring-1 ring-primary/10">
               <Feather className="h-4 w-4 text-primary" strokeWidth={2.25} />
             </span>
-            <div>
+            <div className="min-w-0">
               {tab === "home" ? (
                 <div>
-                  <h1 className="text-lg font-extrabold leading-tight tracking-tight text-book-ink">Nishu Stories</h1>
-                  <p className="mt-0.5 text-[11px] font-medium text-muted-foreground">Short tales · your pace</p>
+                  <h1 className="text-lg font-extrabold leading-tight tracking-tight text-book-ink">Quiet Tale</h1>
+                  <p className="mt-0.5 text-[11px] font-medium text-muted-foreground">Sleep stories · gentle pace</p>
                 </div>
               ) : (
                 <>
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-primary">Nishu Stories</p>
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-primary">Quiet Tale</p>
                   <h1 className="text-lg font-extrabold leading-tight tracking-tight text-book-ink">
                     {tab === "podcast" && "Podcast"}
                     {tab === "upload" && "Upload"}
@@ -86,6 +87,12 @@ const Index = () => {
               )}
             </div>
           </div>
+          {tab === "home" ? (
+            <span className="inline-flex shrink-0 items-center gap-1 rounded-full border border-border/60 bg-background/70 px-2 py-1 text-[9px] font-semibold tracking-wide text-muted-foreground shadow-sm backdrop-blur-sm sm:gap-1.5 sm:px-2.5 sm:text-[10px]">
+              <Globe2 className="h-3 w-3 text-primary/90 sm:h-3.5 sm:w-3.5" strokeWidth={2.25} aria-hidden />
+              <span className="tabular-nums">HI · EN</span>
+            </span>
+          ) : null}
         </header>
       ) : null}
 
